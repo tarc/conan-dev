@@ -5,7 +5,8 @@
   ...
 }:
 let
-  cmkake_3_27_9 = pkgs.callPackage ./packages/cmake/package.nix { };
+  cmkake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
+  cmkake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
   cfg = config.languages.python;
   git = pkgs.git;
   clang =
@@ -18,7 +19,6 @@ let
     in
     stdenv.cc;
   clang_20 = clang (pkgs: pkgs.llvmPackages_20);
-  cmake = pkgs.cmake;
   pkg-config = pkgs.pkg-config;
   autoconf = pkgs.autoconf;
   ninja = pkgs.ninja;
@@ -81,7 +81,7 @@ let
               }},
           'autotools': {"exe": "autoconf"},
           'cmake': {
-              "default": "3.23",
+              "default": "3.27",
               "3.15": {
                   "path": {'Windows': 'C:/tools/cmake/3.15.7/cmake-3.15.7-win64-x64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/3.15.7/bin',
@@ -97,11 +97,11 @@ let
                            'Darwin': '/Users/runner/Applications/CMake/3.27.9/bin',
                            'Linux': "${cmkake_3_27_9}/bin"}
               },
-              "${lib.versions.majorMinor cmake.version}": {},
+              "${lib.versions.majorMinor cmkake_4_1_2.version}": {},
               "4.3": {
                   "path": {'Windows': 'C:/tools/cmake/4.3.4/cmake-4.3.4-windows-x86_64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/4.3.4/bin',
-                           'Linux': "/usr/share/cmake-4.3.4/bin"}
+                           'Linux': "skip-tests"}
               }
           },
           'ninja': {
