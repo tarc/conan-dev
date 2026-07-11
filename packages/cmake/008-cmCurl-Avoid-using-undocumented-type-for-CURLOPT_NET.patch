@@ -1,0 +1,26 @@
+From abcf6c020f2ec93f064c321ed848736623aef32f Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Sat, 11 Jul 2026 21:21:19 +0000
+Subject: [PATCH] cmCurl: Avoid using undocumented type for CURLOPT_NETRC
+ values
+
+---
+ Source/cmCurl.cxx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/cmCurl.cxx b/Source/cmCurl.cxx
+index 24ba3687..828e9e89 100644
+--- a/Source/cmCurl.cxx
++++ b/Source/cmCurl.cxx
+@@ -81,7 +81,7 @@ std::string cmCurlSetNETRCOption(::CURL* curl, const std::string& netrc_level,
+                                  const std::string& netrc_file)
+ {
+   std::string e;
+-  CURL_NETRC_OPTION curl_netrc_level = CURL_NETRC_LAST;
++  long curl_netrc_level = CURL_NETRC_LAST;
+   ::CURLcode res;
+ 
+   if (!netrc_level.empty()) {
+-- 
+2.54.0
+

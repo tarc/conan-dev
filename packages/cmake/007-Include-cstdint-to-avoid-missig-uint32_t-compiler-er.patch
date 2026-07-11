@@ -1,0 +1,24 @@
+From 3b2838d0f5100c3ffa4137bfda5e1f644447144d Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Sat, 11 Jul 2026 21:07:01 +0000
+Subject: [PATCH] Include cstdint to avoid missig uint32_t compiler error
+
+---
+ Utilities/cmcppdap/include/dap/network.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Utilities/cmcppdap/include/dap/network.h b/Utilities/cmcppdap/include/dap/network.h
+index 9d14f6b7..4c5868f5 100644
+--- a/Utilities/cmcppdap/include/dap/network.h
++++ b/Utilities/cmcppdap/include/dap/network.h
+@@ -17,6 +17,7 @@
+ 
+ #include <functional>
+ #include <memory>
++#include <cstdint>
+ 
+ namespace dap {
+ class ReaderWriter;
+-- 
+2.54.0
+
