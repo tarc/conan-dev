@@ -5,6 +5,7 @@
   ...
 }:
 let
+  cmkake_3_15_7 = pkgs.callPackage ./packages/cmake-3.15.7/package.nix { };
   cmkake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
   cmkake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
   cfg = config.languages.python;
@@ -81,11 +82,11 @@ let
               }},
           'autotools': {"exe": "autoconf"},
           'cmake': {
-              "default": "3.27",
+              "default": "3.15",
               "3.15": {
                   "path": {'Windows': 'C:/tools/cmake/3.15.7/cmake-3.15.7-win64-x64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/3.15.7/bin',
-                           'Linux': "skip-tests"}
+                           'Linux': "${cmkake_3_15_7}/bin"}
               },
               "3.23": {
                   "path": {'Windows': 'C:/tools/cmake/3.23.5/cmake-3.23.5-windows-x86_64/bin',
@@ -197,7 +198,7 @@ let
               "default": "system",
               "system": {
                   "path": {'Darwin': os.getenv("ANDROID_NDK"),
-                           'Linux': "skip-tests",
+                           'Linux': os.getenv("ANDROID_NDK_ROOT"),
                            'Windows': "skip-tests"}
               }
           },
@@ -228,7 +229,7 @@ in
   packages = [
     git
     clang_20
-    cmkake_3_27_9
+    cmkake_3_15_7
     pkg-config
     autoconf
     ninja
@@ -296,6 +297,11 @@ in
       cat ./test/conftest_user.py
       python -m pytest "$@"
     '';
+  };
+
+  android = {
+    enable = true;
+    ndk.enable = true;
   };
 
   treefmt = {

@@ -3,6 +3,10 @@
   settings = {
     excludes = [
       "*.toml"
+      "packages/cmake-3.15.7-old/check-pc-files-hook.sh"
+      "packages/cmake-3.15.7-old/setup-hook.sh"
+      "packages/cmake-3.15.7/check-pc-files-hook.sh"
+      "packages/cmake-3.15.7/setup-hook.sh"
       "packages/cmake-3.27.9/check-pc-files-hook.sh"
       "packages/cmake-3.27.9/setup-hook.sh"
       "packages/cmake-4.1.2/check-pc-files-hook.sh"

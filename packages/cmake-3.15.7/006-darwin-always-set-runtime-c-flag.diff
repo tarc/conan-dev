@@ -1,0 +1,27 @@
+From cf4d58809384370e3be60e71aec81c7fc53a3323 Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Sun, 12 Jul 2026 21:29:27 +0000
+Subject: [PATCH] darwin always set runtime c flag
+
+---
+ Modules/Platform/Darwin.cmake | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Modules/Platform/Darwin.cmake b/Modules/Platform/Darwin.cmake
+index 7e02814..164c447 100644
+--- a/Modules/Platform/Darwin.cmake
++++ b/Modules/Platform/Darwin.cmake
+@@ -48,9 +48,7 @@ set(CMAKE_MODULE_EXISTS 1)
+ set(CMAKE_DL_LIBS "")
+ 
+ # Enable rpath support for 10.5 and greater where it is known to work.
+-if("${DARWIN_MAJOR_VERSION}" GREATER 8)
+-  set(CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG "-Wl,-rpath,")
+-endif()
++set(CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG "-Wl,-rpath,")
+ 
+ set(CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG "-compatibility_version ")
+ set(CMAKE_C_OSX_CURRENT_VERSION_FLAG "-current_version ")
+-- 
+2.54.0
+

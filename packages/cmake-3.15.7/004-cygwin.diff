@@ -1,0 +1,262 @@
+From 55533f77ea34ac9364d8120428c8d123f92dcb0c Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Sun, 12 Jul 2026 20:56:13 +0000
+Subject: [PATCH] cygwin
+
+---
+ Modules/FindCurses.cmake           | 15 ------------
+ Source/cmInstallCommand.cxx        |  2 +-
+ Source/kwsys/Glob.cxx              |  2 +-
+ Source/kwsys/SystemInformation.cxx | 23 ++++++------------
+ Source/kwsys/SystemTools.cxx       | 38 ++----------------------------
+ Source/kwsys/SystemTools.hxx.in    |  9 -------
+ 6 files changed, 11 insertions(+), 78 deletions(-)
+
+diff --git a/Modules/FindCurses.cmake b/Modules/FindCurses.cmake
+index b3cd8fa..c0786b1 100644
+--- a/Modules/FindCurses.cmake
++++ b/Modules/FindCurses.cmake
+@@ -64,21 +64,6 @@ set(CURSES_USE_NCURSES FALSE)
+ if(CURSES_NCURSES_LIBRARY  AND ((NOT CURSES_CURSES_LIBRARY) OR CURSES_NEED_NCURSES))
+   set(CURSES_USE_NCURSES TRUE)
+ endif()
+-# http://cygwin.com/ml/cygwin-announce/2010-01/msg00002.html
+-# cygwin ncurses stopped providing curses.h symlinks see above
+-# message.  Cygwin is an ncurses package, so force ncurses on
+-# cygwin if the curses.h is missing
+-if(CYGWIN)
+-  if (CURSES_NEED_WIDE)
+-    if(NOT EXISTS /usr/include/ncursesw/curses.h)
+-      set(CURSES_USE_NCURSES TRUE)
+-    endif()
+-  else()
+-    if(NOT EXISTS /usr/include/curses.h)
+-      set(CURSES_USE_NCURSES TRUE)
+-    endif()
+-  endif()
+-endif()
+ 
+ 
+ # Not sure the logic is correct here.
+diff --git a/Source/cmInstallCommand.cxx b/Source/cmInstallCommand.cxx
+index c9e6923..24b791f 100644
+--- a/Source/cmInstallCommand.cxx
++++ b/Source/cmInstallCommand.cxx
+@@ -1173,7 +1173,7 @@ bool cmInstallCommand::HandleDirectoryMode(
+     } else if (doing == DoingRegex) {
+       literal_args += " REGEX \"";
+ // Match rules are case-insensitive on some platforms.
+-#if defined(_WIN32) || defined(__APPLE__) || defined(__CYGWIN__)
++#if defined(_WIN32) || defined(__APPLE__)
+       std::string regex = cmSystemTools::LowerCase(args[i]);
+ #else
+       std::string regex = args[i];
+diff --git a/Source/kwsys/Glob.cxx b/Source/kwsys/Glob.cxx
+index 829c138..acbb781 100644
+--- a/Source/kwsys/Glob.cxx
++++ b/Source/kwsys/Glob.cxx
+@@ -27,7 +27,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ namespace KWSYS_NAMESPACE {
+-#if defined(_WIN32) || defined(__APPLE__) || defined(__CYGWIN__)
++#if defined(_WIN32) || defined(__APPLE__)
+ // On Windows and Apple, no difference between lower and upper case
+ #  define KWSYS_GLOB_CASE_INDEPENDENT
+ #endif
+diff --git a/Source/kwsys/SystemInformation.cxx b/Source/kwsys/SystemInformation.cxx
+index 7dc6cf4..098d8bd 100644
+--- a/Source/kwsys/SystemInformation.cxx
++++ b/Source/kwsys/SystemInformation.cxx
+@@ -879,7 +879,7 @@ void SystemInformation::RunMemoryCheck()
+ // Hide implementation details in an anonymous namespace.
+ namespace {
+ // *****************************************************************************
+-#if defined(__linux) || defined(__APPLE__)
++#if defined(__linux) || defined(__APPLE__) || defined(__CYGWIN__)
+ int LoadLines(FILE* file, std::vector<std::string>& lines)
+ {
+   // Load each line in the given file into a the vector.
+@@ -909,7 +909,7 @@ int LoadLines(FILE* file, std::vector<std::string>& lines)
+   return nRead;
+ }
+ 
+-#  if defined(__linux)
++#  if defined(__linux) || defined(__CYGWIN__)
+ // *****************************************************************************
+ int LoadLines(const char* fileName, std::vector<std::string>& lines)
+ {
+@@ -942,7 +942,7 @@ int NameValue(std::vector<std::string> const& lines, std::string const& name,
+ }
+ #endif
+ 
+-#if defined(__linux)
++#if defined(__linux) || defined(__CYGWIN__)
+ // ****************************************************************************
+ template <typename T>
+ int GetFieldsFromFile(const char* fileName, const char** fieldNames, T* values)
+@@ -3412,7 +3412,6 @@ bool SystemInformationImplementation::RetreiveInformationFromCpuInfoFile()
+     pos = buffer.find("processor\t", pos + 1);
+   }
+ 
+-#ifdef __linux
+   // Count sockets.
+   std::set<int> PhysicalIDs;
+   std::string idc = this->ExtractValueFromCpuInfoFile(buffer, "physical id");
+@@ -3433,14 +3432,6 @@ bool SystemInformationImplementation::RetreiveInformationFromCpuInfoFile()
+   this->NumberOfPhysicalCPU =
+     NumberOfCoresPerSocket * (unsigned int)NumberOfSockets;
+ 
+-#else // __CYGWIN__
+-  // does not have "physical id" entries, neither "cpu cores"
+-  // this has to be fixed for hyper-threading.
+-  std::string cpucount =
+-    this->ExtractValueFromCpuInfoFile(buffer, "cpu count");
+-  this->NumberOfPhysicalCPU = this->NumberOfLogicalCPU =
+-    atoi(cpucount.c_str());
+-#endif
+   // gotta have one, and if this is 0 then we get a / by 0n
+   // better to have a bad answer than a crash
+   if (this->NumberOfPhysicalCPU <= 0) {
+@@ -3618,7 +3609,7 @@ SystemInformationImplementation::GetHostMemoryTotal()
+   GlobalMemoryStatusEx(&statex);
+   return statex.ullTotalPhys / 1024;
+ #  endif
+-#elif defined(__linux)
++#elif defined(__linux) || defined(__CYGWIN__)
+   SystemInformation::LongLong memTotal = 0;
+   int ierr = GetFieldFromFile("/proc/meminfo", "MemTotal:", memTotal);
+   if (ierr) {
+@@ -3743,7 +3734,7 @@ SystemInformationImplementation::GetHostMemoryUsed()
+   GlobalMemoryStatusEx(&statex);
+   return (statex.ullTotalPhys - statex.ullAvailPhys) / 1024;
+ #  endif
+-#elif defined(__linux)
++#elif defined(__linux) || defined(__CYGWIN__)
+   // First try to use MemAvailable, but it only works on newer kernels
+   const char* names2[3] = { "MemTotal:", "MemAvailable:", NULL };
+   SystemInformation::LongLong values2[2] = { SystemInformation::LongLong(0) };
+@@ -3807,7 +3798,7 @@ SystemInformationImplementation::GetProcMemoryUsed()
+     return -2;
+   }
+   return pmc.WorkingSetSize / 1024;
+-#elif defined(__linux)
++#elif defined(__linux) || defined(__CYGWIN__)
+   SystemInformation::LongLong memUsed = 0;
+   int ierr = GetFieldFromFile("/proc/self/status", "VmRSS:", memUsed);
+   if (ierr) {
+@@ -3884,7 +3875,7 @@ SystemInformation::LongLong SystemInformationImplementation::GetProcessId()
+ #if defined(_WIN32)
+   return GetCurrentProcessId();
+ #elif defined(__linux) || defined(__APPLE__) || defined(__OpenBSD__) ||       \
+-  defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
++  defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__) || defined(__CYGWIN__)
+   return getpid();
+ #else
+   return -1;
+diff --git a/Source/kwsys/SystemTools.cxx b/Source/kwsys/SystemTools.cxx
+index ae7a18a..8821a57 100644
+--- a/Source/kwsys/SystemTools.cxx
++++ b/Source/kwsys/SystemTools.cxx
+@@ -97,19 +97,12 @@
+ #  if defined(_MSC_VER) && _MSC_VER >= 1800
+ #    define KWSYS_WINDOWS_DEPRECATED_GetVersionEx
+ #  endif
+-#elif defined(__CYGWIN__)
+-#  include <windows.h>
+-#  undef _WIN32
+ #endif
+ 
+ #if !KWSYS_CXX_HAS_ENVIRON_IN_STDLIB_H
+ extern char** environ;
+ #endif
+ 
+-#ifdef __CYGWIN__
+-#  include <sys/cygwin.h>
+-#endif
+-
+ // getpwnam doesn't exist on Windows and Cray Xt3/Catamount
+ // same for TIOCGWINSZ
+ #if defined(_WIN32) || defined(__LIBCATAMOUNT__) ||                           \
+@@ -467,9 +460,6 @@ public:
+   std::map<std::string, std::string, SystemToolsPathCaseCmp> PathCaseMap;
+   std::map<std::string, std::string> EnvMap;
+ #endif
+-#ifdef __CYGWIN__
+-  StringMap Cyg2Win32Map;
+-#endif
+ 
+   /**
+    * Actual implementation of ReplaceString.
+@@ -1328,14 +1318,7 @@ bool SystemTools::FileExists(const std::string& filename)
+   if (filename.empty()) {
+     return false;
+   }
+-#if defined(__CYGWIN__)
+-  // Convert filename to native windows path if possible.
+-  char winpath[MAX_PATH];
+-  if (SystemTools::PathCygwinToWin32(filename.c_str(), winpath)) {
+-    return (GetFileAttributesA(winpath) != INVALID_FILE_ATTRIBUTES);
+-  }
+-  return access(filename.c_str(), R_OK) == 0;
+-#elif defined(_WIN32)
++#if defined(_WIN32)
+   DWORD attr =
+     GetFileAttributesW(Encoding::ToWindowsExtendedPath(filename).c_str());
+   if (attr == INVALID_FILE_ATTRIBUTES) {
+@@ -1445,23 +1428,6 @@ int SystemTools::Stat(const std::string& path, SystemTools::Stat_t* buf)
+ #endif
+ }
+ 
+-#ifdef __CYGWIN__
+-bool SystemTools::PathCygwinToWin32(const char* path, char* win32_path)
+-{
+-  auto itr = SystemTools::Statics->Cyg2Win32Map.find(path);
+-  if (itr != SystemTools::Statics->Cyg2Win32Map.end()) {
+-    strncpy(win32_path, itr->second.c_str(), MAX_PATH);
+-  } else {
+-    if (cygwin_conv_path(CCP_POSIX_TO_WIN_A, path, win32_path, MAX_PATH) !=
+-        0) {
+-      win32_path[0] = 0;
+-    }
+-    SystemTools::Statics->Cyg2Win32Map.insert(
+-      SystemToolsStatic::StringMap::value_type(path, win32_path));
+-  }
+-  return win32_path[0] != 0;
+-}
+-#endif
+ 
+ bool SystemTools::Touch(const std::string& filename, bool create)
+ {
+@@ -4072,7 +4038,7 @@ bool SystemTools::FileIsFullPath(const char* in_name)
+ 
+ bool SystemToolsStatic::FileIsFullPath(const char* in_name, size_t len)
+ {
+-#if defined(_WIN32) || defined(__CYGWIN__)
++#if defined(_WIN32)
+   // On Windows, the name must be at least two characters long.
+   if (len < 2) {
+     return false;
+diff --git a/Source/kwsys/SystemTools.hxx.in b/Source/kwsys/SystemTools.hxx.in
+index dd1266b..af1e3d9 100644
+--- a/Source/kwsys/SystemTools.hxx.in
++++ b/Source/kwsys/SystemTools.hxx.in
+@@ -335,15 +335,6 @@ public:
+   static int Stat(const char* path, Stat_t* buf);
+   static int Stat(const std::string& path, Stat_t* buf);
+ 
+-/**
+- * Converts Cygwin path to Win32 path. Uses dictionary container for
+- * caching and calls to cygwin_conv_to_win32_path from Cygwin dll
+- * for actual translation.  Returns true on success, else false.
+- */
+-#ifdef __CYGWIN__
+-  static bool PathCygwinToWin32(const char* path, char* win32_path);
+-#endif
+-
+   /**
+    * Return file length
+    */
+-- 
+2.54.0
+

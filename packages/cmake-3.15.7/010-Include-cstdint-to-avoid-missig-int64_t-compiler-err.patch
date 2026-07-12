@@ -1,0 +1,24 @@
+From 04a01a6349f49bf3daea6067a212257ad9381e48 Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Mon, 13 Jul 2026 13:01:39 +0000
+Subject: [PATCH] Include cstdint to avoid missig int64_t compiler error
+
+---
+ Source/cmWorkerPool.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/cmWorkerPool.h b/Source/cmWorkerPool.h
+index f08bb4f..f75a458 100644
+--- a/Source/cmWorkerPool.h
++++ b/Source/cmWorkerPool.h
+@@ -12,6 +12,7 @@
+ #include <string>
+ #include <utility>
+ #include <vector>
++#include <cstdint>
+ 
+ // -- Types
+ class cmWorkerPoolInternal;
+-- 
+2.54.0
+

@@ -1,0 +1,54 @@
+From 1bf42670db97781d0e676625773808e7a1f0fd95 Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Sun, 12 Jul 2026 15:20:56 +0000
+Subject: [PATCH] application services
+
+---
+ Source/CMakeLists.txt                 | 1 -
+ Source/cmGlobalXCodeGenerator.cxx     | 2 --
+ Utilities/cmlibarchive/CMakeLists.txt | 4 ----
+ 3 files changed, 7 deletions(-)
+
+diff --git a/Source/CMakeLists.txt b/Source/CMakeLists.txt
+index 695e075..66657f5 100644
+--- a/Source/CMakeLists.txt
++++ b/Source/CMakeLists.txt
+@@ -846,7 +846,6 @@ endif()
+ # On Apple we need CoreFoundation and CoreServices
+ if(APPLE)
+   target_link_libraries(CMakeLib "-framework CoreFoundation")
+-  target_link_libraries(CMakeLib "-framework CoreServices")
+ endif()
+ 
+ if(WIN32 AND NOT UNIX)
+diff --git a/Source/cmGlobalXCodeGenerator.cxx b/Source/cmGlobalXCodeGenerator.cxx
+index 9d72528..476e67f 100644
+--- a/Source/cmGlobalXCodeGenerator.cxx
++++ b/Source/cmGlobalXCodeGenerator.cxx
+@@ -38,8 +38,6 @@
+ struct cmLinkImplementation;
+ 
+ #if defined(CMAKE_BUILD_WITH_CMAKE) && defined(__APPLE__)
+-#  define HAVE_APPLICATION_SERVICES
+-#  include <ApplicationServices/ApplicationServices.h>
+ #endif
+ 
+ #if defined(CMAKE_BUILD_WITH_CMAKE)
+diff --git a/Utilities/cmlibarchive/CMakeLists.txt b/Utilities/cmlibarchive/CMakeLists.txt
+index 60c8316..9daaf65 100644
+--- a/Utilities/cmlibarchive/CMakeLists.txt
++++ b/Utilities/cmlibarchive/CMakeLists.txt
+@@ -1660,10 +1660,6 @@ IF(MSVC)
+   ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
+ ENDIF(MSVC)
+ 
+-# We need CoreServices on Mac OS.
+-IF(APPLE)
+-  LIST(APPEND ADDITIONAL_LIBS "-framework CoreServices")
+-ENDIF(APPLE)
+ 
+ add_subdirectory(libarchive)
+ 
+-- 
+2.54.0
+

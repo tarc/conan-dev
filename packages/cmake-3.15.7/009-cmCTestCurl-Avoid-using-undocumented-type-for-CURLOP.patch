@@ -1,0 +1,26 @@
+From b9ae5475ac5a15de172c21baefec30f3b440ea58 Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Sun, 12 Jul 2026 03:00:49 +0000
+Subject: [PATCH] cmCTestCurl: Avoid using undocumented type for
+ CURLOPT_PROXYTYPE values
+
+---
+ Source/CTest/cmCTestCurl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/CTest/cmCTestCurl.h b/Source/CTest/cmCTestCurl.h
+index 6186af8..f76f510 100644
+--- a/Source/CTest/cmCTestCurl.h
++++ b/Source/CTest/cmCTestCurl.h
+@@ -44,7 +44,7 @@ private:
+   std::vector<std::string> HttpHeaders;
+   std::string HTTPProxyAuth;
+   std::string HTTPProxy;
+-  curl_proxytype HTTPProxyType;
++  long HTTPProxyType;
+   bool VerifyHostOff;
+   bool VerifyPeerOff;
+   bool UseHttp10;
+-- 
+2.54.0
+
