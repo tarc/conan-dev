@@ -8,6 +8,7 @@ let
   cmkake_3_15_7 = pkgs.callPackage ./packages/cmake-3.15.7/package.nix { };
   cmkake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
   cmkake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
+  qbs_2_6_0 = pkgs.callPackage ./packages/qbs-2.6.0/package.nix { };
   cfg = config.languages.python;
   git = pkgs.git;
   clang =
@@ -29,7 +30,6 @@ let
   bazel_8 = pkgs.bazel_8;
   bazel_9 = pkgs.bazel_9;
   premake5 = pkgs.premake5;
-  qbs = pkgs.qbs;
   emscripten = pkgs.emscripten;
   node = pkgs.nodejs;
   intel-oneapi-toolkit = pkgs.intel-oneapi-toolkit;
@@ -204,10 +204,9 @@ let
           },
           "qbs": {
               "exe": "qbs",
-              "default": "${qbs.version}",
-              "${qbs.version}": {},
+              "default": "2.6.0",
               "2.6.0": {
-                  "path": {'Linux': "skip-tests"}
+                  "path": {'Linux': '${qbs_2_6_0}/bin'}
               }
           },
           "emcc": {},
@@ -237,7 +236,7 @@ in
     scons
     bazel_7
     premake5
-    qbs
+    qbs_2_6_0
     emscripten
     node
     intel-oneapi-toolkit
