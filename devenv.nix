@@ -24,6 +24,8 @@ let
   clang_20 = clang (pkgs: pkgs.llvmPackages_20);
   pkg-config = pkgs.pkg-config;
   autoconf = pkgs.autoconf;
+  automake = pkgs.automake;
+  libtool_2 = pkgs.libtool_2;
   meson = pkgs.meson;
   scons = pkgs.scons;
   bazel_7 = pkgs.bazel_7;
@@ -230,6 +232,8 @@ in
     cmkake_3_15_7
     pkg-config
     autoconf
+    automake
+    libtool_2
     ninja_1_10_2
     meson
     scons
