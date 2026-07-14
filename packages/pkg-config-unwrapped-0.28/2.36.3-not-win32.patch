@@ -1,0 +1,367 @@
+From d2ff340a637e2655381da743cdcc3c9f14b0d2af Mon Sep 17 00:00:00 2001
+From: tarcisio <tarcisio.genaro@gmail.com>
+Date: Tue, 14 Jul 2026 23:05:14 +0000
+Subject: [PATCH] 2.36.3 not win32
+
+---
+ glib/configure.ac                   |  5 +--
+ glib/glib/gatomic.c                 |  2 +-
+ glib/glib/gcharset.c                |  2 +-
+ glib/glib/gconvert.c                |  8 ++---
+ glib/glib/gfileutils.c              |  4 +--
+ glib/glib/glib.h                    |  2 +-
+ glib/glib/gtypes.h                  |  2 +-
+ glib/glib/gutf8.c                   |  2 +-
+ glib/glib/gutils.c                  |  9 ++---
+ glib/glib/gutils.h                  |  4 +--
+ glib/glib/gwin32.h                  |  7 ++--
+ glib/glib/libcharset/localcharset.c | 55 ++---------------------------
+ 12 files changed, 19 insertions(+), 83 deletions(-)
+
+diff --git a/glib/configure.ac b/glib/configure.ac
+index 9e48cc9..6b45aa1 100644
+--- a/glib/configure.ac
++++ b/glib/configure.ac
+@@ -1760,7 +1760,7 @@ dnl ****************************************
+ 
+ AC_MSG_CHECKING(for platform-dependent source)
+ case "$host" in
+-  *-*-cygwin*|*-*-mingw*)
++  *-*-mingw*)
+     PLATFORMDEP=gwin32.lo
+     ;;
+   *)
+@@ -2397,9 +2397,6 @@ dnl *** Win32 API libs ***
+ dnl **********************
+ 
+ case $host in
+-  *-*-cygwin*)
+-	G_LIBS_EXTRA="-luser32 -lkernel32"
+-    ;;
+   *-*-mingw*)
+ 	G_LIBS_EXTRA="-lws2_32 -lole32 -lwinmm -lshlwapi"
+     ;;
+diff --git a/glib/glib/gatomic.c b/glib/glib/gatomic.c
+index 2df2bcc..c04b45e 100644
+--- a/glib/glib/gatomic.c
++++ b/glib/glib/gatomic.c
+@@ -464,7 +464,7 @@ gsize
+   return g_atomic_pointer_xor ((volatile gpointer *) atomic, val);
+ }
+ 
+-#elif defined (G_PLATFORM_WIN32)
++#elif defined (G_OS_WIN32)
+ 
+ #include <windows.h>
+ #if !defined(_M_AMD64) && !defined (_M_IA64) && !defined(_M_X64)
+diff --git a/glib/glib/gcharset.c b/glib/glib/gcharset.c
+index 4f52ab4..58e4403 100644
+--- a/glib/glib/gcharset.c
++++ b/glib/glib/gcharset.c
+@@ -496,7 +496,7 @@ guess_category_value (const gchar *category_name)
+   if ((retval != NULL) && (retval[0] != '\0'))
+     return retval;
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+   /* g_win32_getlocale() first checks for LC_ALL, LC_MESSAGES and
+    * LANG, which we already did above. Oh well. The main point of
+    * calling g_win32_getlocale() is to get the thread's locale as used
+diff --git a/glib/glib/gconvert.c b/glib/glib/gconvert.c
+index e18f3c1..1a74848 100644
+--- a/glib/glib/gconvert.c
++++ b/glib/glib/gconvert.c
+@@ -33,9 +33,7 @@
+ 
+ #ifdef G_OS_WIN32
+ #include "win_iconv.c"
+-#endif
+ 
+-#ifdef G_PLATFORM_WIN32
+ #define STRICT
+ #include <windows.h>
+ #undef STRICT
+@@ -1262,7 +1260,7 @@ g_locale_from_utf8 (const gchar *utf8string,
+ 		      charset, "UTF-8", bytes_read, bytes_written, error);
+ }
+ 
+-#ifndef G_PLATFORM_WIN32
++#ifndef G_OS_WIN32
+ 
+ typedef struct _GFilenameCharsetCache GFilenameCharsetCache;
+ 
+@@ -1378,7 +1376,7 @@ g_get_filename_charsets (const gchar ***filename_charsets)
+   return cache->is_utf8;
+ }
+ 
+-#else /* G_PLATFORM_WIN32 */
++#else /* G_OS_WIN32 */
+ 
+ gboolean
+ g_get_filename_charsets (const gchar ***filename_charsets) 
+@@ -1407,7 +1405,7 @@ g_get_filename_charsets (const gchar ***filename_charsets)
+ #endif
+ }
+ 
+-#endif /* G_PLATFORM_WIN32 */
++#endif /* G_OS_WIN32 */
+ 
+ static gboolean
+ get_filename_charset (const gchar **filename_charset)
+diff --git a/glib/glib/gfileutils.c b/glib/glib/gfileutils.c
+index 0df9305..76f5425 100644
+--- a/glib/glib/gfileutils.c
++++ b/glib/glib/gfileutils.c
+@@ -2175,7 +2175,7 @@ g_path_skip_root (const gchar *file_name)
+ {
+   g_return_val_if_fail (file_name != NULL, NULL);
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+   /* Skip \\server\share or //server/share */
+   if (G_IS_DIR_SEPARATOR (file_name[0]) &&
+       G_IS_DIR_SEPARATOR (file_name[1]) &&
+@@ -2185,7 +2185,6 @@ g_path_skip_root (const gchar *file_name)
+       gchar *p;
+       p = strchr (file_name + 2, G_DIR_SEPARATOR);
+ 
+-#ifdef G_OS_WIN32
+       {
+         gchar *q;
+ 
+@@ -2193,7 +2192,6 @@ g_path_skip_root (const gchar *file_name)
+         if (p == NULL || (q != NULL && q < p))
+         p = q;
+       }
+-#endif
+ 
+       if (p && p > file_name + 2 && p[1])
+         {
+diff --git a/glib/glib/glib.h b/glib/glib/glib.h
+index 1ba1f47..3559746 100644
+--- a/glib/glib/glib.h
++++ b/glib/glib/glib.h
+@@ -95,7 +95,7 @@
+ #include <glib/gvariant.h>
+ #include <glib/gversion.h>
+ #include <glib/gversionmacros.h>
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+ #include <glib/gwin32.h>
+ #endif
+ 
+diff --git a/glib/glib/gtypes.h b/glib/glib/gtypes.h
+index 7e4c8ea..fe774ee 100644
+--- a/glib/glib/gtypes.h
++++ b/glib/glib/gtypes.h
+@@ -462,7 +462,7 @@ G_END_DECLS
+  * properly get exported in Windows DLLs.
+  */
+ #ifndef GLIB_VAR
+-#  ifdef G_PLATFORM_WIN32
++#  ifdef G_OS_WIN32
+ #    ifdef GLIB_STATIC_COMPILATION
+ #      define GLIB_VAR extern
+ #    else /* !GLIB_STATIC_COMPILATION */
+diff --git a/glib/glib/gutf8.c b/glib/glib/gutf8.c
+index e61d33d..121c66b 100644
+--- a/glib/glib/gutf8.c
++++ b/glib/glib/gutf8.c
+@@ -27,7 +27,7 @@
+ #endif
+ #include <string.h>
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+ #include <stdio.h>
+ #define STRICT
+ #include <windows.h>
+diff --git a/glib/glib/gutils.c b/glib/glib/gutils.c
+index 38b5e44..18c415d 100644
+--- a/glib/glib/gutils.c
++++ b/glib/glib/gutils.c
+@@ -71,7 +71,7 @@
+ #include "garray.h"
+ #include "glibintl.h"
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+ #include "gconvert.h"
+ #include "gwin32.h"
+ #endif
+@@ -85,16 +85,13 @@
+  * These are portable utility functions.
+  */
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+ #  include <windows.h>
+ #  ifndef GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+ #    define GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT 2
+ #    define GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS 4
+ #  endif
+ #  include <lmcons.h>		/* For UNLEN */
+-#endif /* G_PLATFORM_WIN32 */
+-
+-#ifdef G_OS_WIN32
+ #  include <direct.h>
+ #  include <shlobj.h>
+    /* older SDK (e.g. msvc 5.0) does not have these*/
+@@ -130,7 +127,7 @@
+ #include <langinfo.h>
+ #endif
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+ 
+ gchar *
+ _glib_get_dll_directory (void)
+diff --git a/glib/glib/gutils.h b/glib/glib/gutils.h
+index 213a39f..9281d1d 100644
+--- a/glib/glib/gutils.h
++++ b/glib/glib/gutils.h
+@@ -342,7 +342,7 @@ G_END_DECLS
+  * On non-Windows platforms, expands to nothing.
+  */
+ 
+-#ifndef G_PLATFORM_WIN32
++#ifndef G_OS_WIN32
+ # define G_WIN32_DLLMAIN_FOR_DLL_NAME(static, dll_name)
+ #else
+ # define G_WIN32_DLLMAIN_FOR_DLL_NAME(static, dll_name)			\
+@@ -370,6 +370,6 @@ DllMain (HINSTANCE hinstDLL,						\
+ 
+ #endif	/* !G_DISABLE_DEPRECATED */
+ 
+-#endif /* G_PLATFORM_WIN32 */
++#endif /* G_OS_WIN32 */
+ 
+ #endif /* __G_UTILS_H__ */
+diff --git a/glib/glib/gwin32.h b/glib/glib/gwin32.h
+index b0fb7c0..8003487 100644
+--- a/glib/glib/gwin32.h
++++ b/glib/glib/gwin32.h
+@@ -33,7 +33,7 @@
+ 
+ #include <glib/gtypes.h>
+ 
+-#ifdef G_PLATFORM_WIN32
++#ifdef G_OS_WIN32
+ 
+ G_BEGIN_DECLS
+ 
+@@ -41,8 +41,6 @@ G_BEGIN_DECLS
+ #define MAXPATHLEN 1024
+ #endif
+ 
+-#ifdef G_OS_WIN32
+-
+ /*
+  * To get prototypes for the following POSIXish functions, you have to
+  * include the indicated non-POSIX headers. The functions are defined
+@@ -67,7 +65,6 @@ G_BEGIN_DECLS
+  */
+ gint		g_win32_ftruncate	(gint		 f,
+ 					 guint		 size);
+-#endif /* G_OS_WIN32 */
+ 
+ /* The MS setlocale uses locale names of the form "English_United
+  * States.1252" etc. We want the Unixish standard form "en", "zh_TW"
+@@ -113,6 +110,6 @@ gchar*          g_win32_locale_filename_from_utf8 (const gchar *utf8filename);
+ 
+ G_END_DECLS
+ 
+-#endif	 /* G_PLATFORM_WIN32 */
++#endif	 /* G_OS_WIN32 */
+ 
+ #endif /* __G_WIN32_H__ */
+diff --git a/glib/glib/libcharset/localcharset.c b/glib/glib/libcharset/localcharset.c
+index 0d001f9..6315f3b 100644
+--- a/glib/glib/libcharset/localcharset.c
++++ b/glib/glib/libcharset/localcharset.c
+@@ -46,10 +46,6 @@
+ #   include <locale.h>
+ #  endif
+ # endif
+-# ifdef __CYGWIN__
+-#  define WIN32_LEAN_AND_MEAN
+-#  include <windows.h>
+-# endif
+ #elif defined WIN32_NATIVE
+ # define WIN32_LEAN_AND_MEAN
+ # include <windows.h>
+@@ -111,7 +107,7 @@ _g_locale_get_charset_aliases (void)
+   cp = charset_aliases;
+   if (cp == NULL)
+     {
+-#if !(defined VMS || defined WIN32_NATIVE || defined __CYGWIN__)
++#if !(defined VMS || defined WIN32_NATIVE)
+       FILE *fp;
+       const char *dir;
+       const char *base = "charset.alias";
+@@ -237,7 +233,7 @@ _g_locale_get_charset_aliases (void)
+ 	   "DECKOREAN" "\0" "EUC-KR" "\0";
+ # endif
+ 
+-# if defined WIN32_NATIVE || defined __CYGWIN__
++# if defined WIN32_NATIVE
+       /* To avoid the troubles of installing a separate file in the same
+ 	 directory as the DLL and of retrieving the DLL's directory at
+ 	 runtime, simply inline the aliases here.  */
+@@ -292,53 +288,6 @@ _g_locale_charset_raw (void)
+   /* Most systems support nl_langinfo (CODESET) nowadays.  */
+   codeset = nl_langinfo (CODESET);
+ 
+-#  ifdef __CYGWIN__
+-  /* Cygwin 2006 does not have locales.  nl_langinfo (CODESET) always
+-     returns "US-ASCII".  As long as this is not fixed, return the suffix
+-     of the locale name from the environment variables (if present) or
+-     the codepage as a number.  */
+-  if (codeset != NULL && strcmp (codeset, "US-ASCII") == 0)
+-    {
+-      const char *locale;
+-      static char buf[2 + 10 + 1];
+-
+-      locale = getenv ("LC_ALL");
+-      if (locale == NULL || locale[0] == '\0')
+-	{
+-	  locale = getenv ("LC_CTYPE");
+-	  if (locale == NULL || locale[0] == '\0')
+-	    locale = getenv ("LANG");
+-	}
+-      if (locale != NULL && locale[0] != '\0')
+-	{
+-	  /* If the locale name contains an encoding after the dot, return
+-	     it.  */
+-	  const char *dot = strchr (locale, '.');
+-
+-	  if (dot != NULL)
+-	    {
+-	      const char *modifier;
+-
+-	      dot++;
+-	      /* Look for the possible @... trailer and remove it, if any.  */
+-	      modifier = strchr (dot, '@');
+-	      if (modifier == NULL)
+-		return dot;
+-	      if (modifier - dot < sizeof (buf))
+-		{
+-		  memcpy (buf, dot, modifier - dot);
+-		  buf [modifier - dot] = '\0';
+-		  return buf;
+-		}
+-	    }
+-	}
+-
+-      /* Woe32 has a function returning the locale's codepage as a number.  */
+-      sprintf (buf, "CP%u", GetACP ());
+-      codeset = buf;
+-    }
+-#  endif
+-
+ # else
+ 
+   /* On old systems which lack it, use setlocale or getenv.  */
+-- 
+2.54.0
+

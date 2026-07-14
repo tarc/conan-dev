@@ -10,9 +10,13 @@ let
   cmkake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
   qbs_2_6_0 = pkgs.callPackage ./packages/qbs-2.6.0/package.nix { };
   ninja_1_10_2 = pkgs.callPackage ./packages/ninja/package.nix { ninjaRelease = "1.10"; };
+  pkg-config-unwrapped_0_28 = pkgs.callPackage ./packages/pkg-config-unwrapped-0.28/package.nix { };
   pkg-config-unwrapped_0_29_2 =
     pkgs.callPackage ./packages/pkg-config-unwrapped-0.29.2/package.nix
       { };
+  pkg-config_0_28 = pkgs.callPackage ./build-support/pkg-config-wrapper {
+    pkg-config = pkg-config-unwrapped_0_28;
+  };
   pkg-config_0_29_2 = pkgs.callPackage ./build-support/pkg-config-wrapper {
     pkg-config = pkg-config-unwrapped_0_29_2;
   };
@@ -77,20 +81,20 @@ let
                             "18": {"disabled": not vs_installation_path("18")}},
           'pkg_config': {
               "exe": "pkg-config",
-              "default": "${pkg-config_0_29_2.version}",
+              "default": "0.28",
               "${lib.versions.majorMinor pkg-config_0_29_2.version}": {
                   "path": {
                       'Windows': "skip-tests",
-                      'Darwin': "${pkg-config_0_29_2}/bin"},
-                      'Linux': "${pkg-config_0_29_2}/bin"},
+                      'Darwin': "${pkg-config_0_29_2}/bin",
+                      'Linux': "${pkg-config_0_29_2}/bin",
                   }
               },
               "0.28": {
                   "path": {
                       # Using chocolatey in Windows -> choco install pkgconfiglite --version 0.28
                       'Windows': f"{windows_choco_root}/pkgconfiglite/tools/pkg-config-lite-0.28-1/bin",
-                      'Darwin': f"{homebrew_root}/bin",
-                      'Linux': "skip-tests"
+                      'Darwin': "${pkg-config_0_28}/bin",
+                      'Linux': "${pkg-config_0_28}/bin"
                   }
               }
           },
@@ -244,7 +248,7 @@ in
     git
     clang_20
     cmkake_3_15_7
-    pkg-config_0_29_2
+    pkg-config_0_28
     autoconf
     automake
     libtool_2

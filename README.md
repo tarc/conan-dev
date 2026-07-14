@@ -11,6 +11,7 @@
 - `conan/test/functional/toolchains/google/test_bazel.py`
 - `conan/test/functional/toolchains/intel/test_intel_cc.py`
 - `conan/test/functional/tools/system/python_manager_test.py`
+- `conan/test/integration/remote/auth_test.py`
 - `conan/test/unittests/tools/env/test_env_files.py`
 
 ## References
