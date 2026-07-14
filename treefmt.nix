@@ -11,6 +11,9 @@
       "packages/cmake-3.27.9/setup-hook.sh"
       "packages/cmake-4.1.2/check-pc-files-hook.sh"
       "packages/cmake-4.1.2/setup-hook.sh"
+      "build-support/*/*.sh"
+      "build-support/*/*.nix"
+      "build-support/*/*.bash"
     ];
   };
 
