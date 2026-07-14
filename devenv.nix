@@ -9,6 +9,7 @@ let
   cmkake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
   cmkake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
   qbs_2_6_0 = pkgs.callPackage ./packages/qbs-2.6.0/package.nix { };
+  ninja_1_10_2 = pkgs.callPackage ./packages/ninja/package.nix { ninjaRelease = "1.10"; };
   cfg = config.languages.python;
   git = pkgs.git;
   clang =
@@ -23,7 +24,6 @@ let
   clang_20 = clang (pkgs: pkgs.llvmPackages_20);
   pkg-config = pkgs.pkg-config;
   autoconf = pkgs.autoconf;
-  ninja = pkgs.ninja;
   meson = pkgs.meson;
   scons = pkgs.scons;
   bazel_7 = pkgs.bazel_7;
@@ -106,12 +106,11 @@ let
               }
           },
           'ninja': {
-              "default": "${ninja.version}",
-              "${ninja.version}": {},
+              "default": "1.10.2",
               "1.10.2": {
                   "path": {'Windows': f'{windows_choco_root}/ninja/tools',
-                           'Linux': 'skip-tests',
-                           'Darwin': 'skip-tests'}
+                           'Linux': '${ninja_1_10_2}/bin',
+                           'Darwin': '${ninja_1_10_2}/bin'}
               }
           },
           # This is the non-msys2 mingw, which is 32 bits x86 arch
@@ -231,7 +230,7 @@ in
     cmkake_3_15_7
     pkg-config
     autoconf
-    ninja
+    ninja_1_10_2
     meson
     scons
     bazel_7
