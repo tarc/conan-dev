@@ -210,6 +210,8 @@ let
                   "path": {'Linux': '${qbs_2_6_0}/bin'}
               }
           },
+          "git": {},
+          "scons": {},
           "emcc": {},
           "node": {},
           "intel_oneapi": {
