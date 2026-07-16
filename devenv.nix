@@ -5,9 +5,16 @@
   ...
 }:
 let
-  cmkake_3_15_7 = pkgs.callPackage ./packages/cmake-3.15.7/package.nix { };
-  cmkake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
-  cmkake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
+  cfg = config.languages.python;
+
+  # Bootstrap settings:
+  stdenv = pkgs.multiStdenv;
+  libc_bin = pkgs.multiStdenv.cc.libc_bin;
+
+  # Toolchain settings:
+  cmake_3_15_7 = pkgs.callPackage ./packages/cmake-3.15.7/package.nix { };
+  cmake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
+  cmake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
   qbs_2_6_0 = pkgs.callPackage ./packages/qbs-2.6.0/package.nix { };
   ninja_1_10_2 = pkgs.callPackage ./packages/ninja/package.nix { ninjaRelease = "1.10"; };
   pkg-config-unwrapped_0_28 = pkgs.callPackage ./packages/pkg-config-unwrapped-0.28/package.nix { };
@@ -20,8 +27,6 @@ let
   pkg-config_0_29_2 = pkgs.callPackage ./build-support/pkg-config-wrapper {
     pkg-config = pkg-config-unwrapped_0_29_2;
   };
-  cfg = config.languages.python;
-  git = pkgs.git;
   clang =
     llvmPackageSelect:
     let
@@ -44,6 +49,32 @@ let
   emscripten = pkgs.emscripten;
   node = pkgs.nodejs;
   intel-oneapi-toolkit = pkgs.intel-oneapi-toolkit;
+
+  # Tools:
+  git-wrapped = pkgs.writeShellApplication {
+    name = "git";
+    runtimeInputs = [
+      pkgs.git
+    ];
+    text = ''
+      passed=false
+      for arg in "$@"; do
+        case "$arg" in
+          diff)
+            passed=true
+            ;;
+        esac
+      done
+      if [ "$passed" = true ];
+      then
+        git "$@" --no-ext-diff
+      else
+        git "$@"
+      fi
+    '';
+  };
+
+  # Settings:
   conftestUser = pkgs.writeTextFile {
     name = "conf";
     text = ''
@@ -104,7 +135,7 @@ let
               "3.15": {
                   "path": {'Windows': 'C:/tools/cmake/3.15.7/cmake-3.15.7-win64-x64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/3.15.7/bin',
-                           'Linux': "${cmkake_3_15_7}/bin"}
+                           'Linux': "${cmake_3_15_7}/bin"}
               },
               "3.23": {
                   "path": {'Windows': 'C:/tools/cmake/3.23.5/cmake-3.23.5-windows-x86_64/bin',
@@ -114,9 +145,9 @@ let
               "3.27": {
                   "path": {'Windows': 'C:/tools/cmake/3.27.9/cmake-3.27.9-windows-x86_64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/3.27.9/bin',
-                           'Linux': "${cmkake_3_27_9}/bin"}
+                           'Linux': "${cmake_3_27_9}/bin"}
               },
-              "${lib.versions.majorMinor cmkake_4_1_2.version}": {},
+              "${lib.versions.majorMinor cmake_4_1_2.version}": {},
               "4.3": {
                   "path": {'Windows': 'C:/tools/cmake/4.3.4/cmake-4.3.4-windows-x86_64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/4.3.4/bin',
@@ -226,7 +257,14 @@ let
                   "path": {'Linux': '${qbs_2_6_0}/bin'}
               }
           },
-          "git": {},
+          "git": {
+              "exe": "git",
+              "default": "wrapped",
+              "wrapped": {
+                  "path": {'Linux': '${git-wrapped}/bin',
+                           'Darwin': '${git-wrapped}/bin'}
+              }
+          },
           "scons": {},
           "emcc": {},
           "node": {},
@@ -237,6 +275,13 @@ let
                   "path": {"Linux": "${intel-oneapi-toolkit}/compiler/2026.0/bin"},
                   "root": {"Linux": "${intel-oneapi-toolkit}"}
               }
+          },
+          "ldd": {
+              "exe": "ldd",
+              "default": "system",
+              "system": {
+                  "path": {'Linux': "${libc_bin}/bin"}
+              }
           }
       }
     '';
@@ -244,10 +289,12 @@ let
   };
 in
 {
+  inherit stdenv;
+
   packages = [
-    git
     clang_20
-    cmkake_3_15_7
+    cmake_3_15_7
+    git-wrapped
     pkg-config_0_28
     autoconf
     automake
