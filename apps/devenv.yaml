@@ -2,10 +2,5 @@ allowUnfree: true
 inputs:
   nixpkgs:
     url: github:cachix/devenv-nixpkgs/rolling
-  treefmt-nix:
-    url: github:numtide/treefmt-nix
-    inputs:
-      nixpkgs:
-        follows: nixpkgs
 imports:
   - /nix

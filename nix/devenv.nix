@@ -113,5 +113,10 @@ in
         git-wrapped
         ;
     };
+
+    treefmt = {
+      enable = true;
+      config = ../treefmt.nix;
+    };
   };
 }
