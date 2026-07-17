@@ -64,6 +64,12 @@ let
               }
           },
           'autotools': {"exe": "autoconf"},
+          'shared': {
+              'default': 'all',
+              'all': {
+                  'path': {'Linux': 'skip-tests'}
+              }
+          },
           'cmake': {
               "default": "3.15",
               "3.15": {

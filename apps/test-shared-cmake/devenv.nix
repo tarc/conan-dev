@@ -6,10 +6,10 @@ let
   cfg = config.playPython;
 in
 {
-  inherit (cfg.packages) stdenv;
+  # inherit (cfg.packages) stdenv;
 
   packages = with cfg.packages; [
-    clang_20
+    # clang_20
     git-wrapped
     pkg-config_0_28
     autoconf
@@ -28,6 +28,7 @@ in
 
   scripts.bootstrap-hello.exec = ''
     set -euo pipefail
+    set -x
     cd "$DEVENV_ROOT"
     rm -rf ./hello
     mkdir -p hello
@@ -38,6 +39,7 @@ in
 
   scripts.bootstrap-chat.exec = ''
     set -euo pipefail
+    set -x
     cd "$DEVENV_ROOT"
     rm -rf ./chat
     mkdir -p chat
@@ -48,6 +50,7 @@ in
 
   scripts.bootstrap-app.exec = ''
     set -euo pipefail
+    set -x
     cd "$DEVENV_ROOT"
     rm -rf ./app
     mkdir -p app
@@ -58,16 +61,20 @@ in
 
   scripts.bootstrap-autoapp.exec = ''
     set -euo pipefail
+    set -x
     cd "$DEVENV_ROOT"
     rm -rf ./autoapp
     mkdir -p autoapp
     cd autoapp
     conan new autotools_exe -d name=autoapp -d version=0.1 -d requires=chat/0.1
-    conan create . -o "chat/*:shared=True" -o "hello/*:shared=True"
+    conan install . -o "chat/*:shared=True" -o "hello/*:shared=True" --build=missing -g VirtualRunEnv
+    . ./build-release/conan/conanrun.sh && \
+      conan create . -o "chat/*:shared=True" -o "hello/*:shared=True" --build=missing
   '';
 
   scripts.test-other-client-can-link-cmake.exec = ''
     set -euo pipefail
+    set -x
     conan remove "*" -c
     bootstrap-hello
     bootstrap-chat
@@ -82,6 +89,7 @@ in
 
   scripts.test-other-client-can-link-autotools.exec = ''
     set -euo pipefail
+    set -x
     conan remove "*" -c
     bootstrap-hello
     bootstrap-chat

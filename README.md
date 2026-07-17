@@ -2,8 +2,6 @@
 
 ## Failing tests
 
-- `apps/conan/conan/test/functional/toolchains/cmake/test_shared_cmake.py`
-- `apps/conan/conan/test/functional/toolchains/gnu/test_v2_autotools_template.py`
 - `apps/conan/conan/test/functional/toolchains/google/test_bazel.py`
 - `apps/conan/conan/test/functional/toolchains/intel/test_intel_cc.py`
 - `apps/conan/conan/test/functional/tools/system/python_manager_test.py`
