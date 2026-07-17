@@ -10,7 +10,6 @@ in
 
   packages = with cfg.packages; [
     clang_20
-    cmake_3_15_7
     git-wrapped
     pkg-config_0_28
     autoconf
@@ -28,6 +27,7 @@ in
   ];
 
   scripts.bootstrap-hello.exec = ''
+    set -euo pipefail
     cd "$DEVENV_ROOT"
     rm -rf ./hello
     mkdir -p hello
@@ -37,6 +37,7 @@ in
   '';
 
   scripts.bootstrap-chat.exec = ''
+    set -euo pipefail
     cd "$DEVENV_ROOT"
     rm -rf ./chat
     mkdir -p chat
@@ -46,6 +47,7 @@ in
   '';
 
   scripts.bootstrap-app.exec = ''
+    set -euo pipefail
     cd "$DEVENV_ROOT"
     rm -rf ./app
     mkdir -p app
@@ -55,6 +57,7 @@ in
   '';
 
   scripts.bootstrap-autoapp.exec = ''
+    set -euo pipefail
     cd "$DEVENV_ROOT"
     rm -rf ./autoapp
     mkdir -p autoapp
@@ -63,15 +66,39 @@ in
     conan create . -o "chat/*:shared=True" -o "hello/*:shared=True"
   '';
 
+  scripts.test-other-client-can-link-cmake.exec = ''
+    set -euo pipefail
+    conan remove "*" -c
+    bootstrap-hello
+    bootstrap-chat
+    bootstrap-app
+    cd "$DEVENV_ROOT"
+    rm -rf ./build
+    mkdir -p build
+    cd build
+    conan install --requires="app/0.1@" -o "chat*:shared=True" -o "hello/*:shared=True" -g VirtualRunEnv
+    . ./conanrun.sh && app
+  '';
+
   scripts.test-other-client-can-link-autotools.exec = ''
+    set -euo pipefail
     conan remove "*" -c
     bootstrap-hello
     bootstrap-chat
     bootstrap-autoapp
+    cd "$DEVENV_ROOT"
+    rm -rf ./build
+    mkdir -p build
+    cd build
+    conan install --requires="autoapp/0.1@" -o "chat*:shared=True" -o "hello/*:shared=True" -g VirtualRunEnv
+    . ./conanrun.sh && autoapp
   '';
 
   languages.cplusplus = {
     enable = true;
+    cmake = {
+      package = cfg.packages.cmake_3_15_7;
+    };
     conan = {
       enable = true;
       config = {
