@@ -1,0 +1,9 @@
+# Conan
+.conan2
+config/
+
+# Tests
+hello/
+chat/
+app/
+autoapp/
