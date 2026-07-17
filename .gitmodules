@@ -1,3 +1,3 @@
 [submodule "conan"]
-	path = apps/conan
+	path = apps/conan/conan
 	url = git@github.com:conan-io/conan.git

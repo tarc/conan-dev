@@ -304,9 +304,4 @@ in
     enable = true;
     ndk.enable = true;
   };
-
-  treefmt = {
-    enable = true;
-    config = ../treefmt.nix;
-  };
 }
