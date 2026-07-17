@@ -5,8 +5,8 @@
   ...
 }:
 let
-  cfg = config.languages.python;
-  playPythonPackages = config.playPython.packages;
+  python = config.languages.python;
+  cfg = config.playPython;
 
   # Settings:
   conftestUser = pkgs.writeTextFile {
@@ -35,7 +35,7 @@ let
               "20": {
                 "path": {
                       'Windows': 'C:/Program Files/LLVM/bin',  # by choco
-                      'Linux': "${playPythonPackages.clang_20}/bin"
+                      'Linux': "${cfg.packages.clang_20}/bin"
                 }
               }
           },
@@ -47,19 +47,19 @@ let
           'pkg_config': {
               "exe": "pkg-config",
               "default": "0.28",
-              "${lib.versions.majorMinor playPythonPackages.pkg-config_0_29_2.version}": {
+              "${lib.versions.majorMinor cfg.packages.pkg-config_0_29_2.version}": {
                   "path": {
                       'Windows': "skip-tests",
-                      'Darwin': "${playPythonPackages.pkg-config_0_29_2}/bin",
-                      'Linux': "${playPythonPackages.pkg-config_0_29_2}/bin",
+                      'Darwin': "${cfg.packages.pkg-config_0_29_2}/bin",
+                      'Linux': "${cfg.packages.pkg-config_0_29_2}/bin",
                   }
               },
               "0.28": {
                   "path": {
                       # Using chocolatey in Windows -> choco install pkgconfiglite --version 0.28
                       'Windows': f"{windows_choco_root}/pkgconfiglite/tools/pkg-config-lite-0.28-1/bin",
-                      'Darwin': "${playPythonPackages.pkg-config_0_28}/bin",
-                      'Linux': "${playPythonPackages.pkg-config_0_28}/bin"
+                      'Darwin': "${cfg.packages.pkg-config_0_28}/bin",
+                      'Linux': "${cfg.packages.pkg-config_0_28}/bin"
                   }
               }
           },
@@ -69,7 +69,7 @@ let
               "3.15": {
                   "path": {'Windows': 'C:/tools/cmake/3.15.7/cmake-3.15.7-win64-x64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/3.15.7/bin',
-                           'Linux': "${playPythonPackages.cmake_3_15_7}/bin"}
+                           'Linux': "${cfg.packages.cmake_3_15_7}/bin"}
               },
               "3.23": {
                   "path": {'Windows': 'C:/tools/cmake/3.23.5/cmake-3.23.5-windows-x86_64/bin',
@@ -79,9 +79,9 @@ let
               "3.27": {
                   "path": {'Windows': 'C:/tools/cmake/3.27.9/cmake-3.27.9-windows-x86_64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/3.27.9/bin',
-                           'Linux': "${playPythonPackages.cmake_3_27_9}/bin"}
+                           'Linux': "${cfg.packages.cmake_3_27_9}/bin"}
               },
-              "${lib.versions.majorMinor playPythonPackages.cmake_4_1_2.version}": {},
+              "${lib.versions.majorMinor cfg.packages.cmake_4_1_2.version}": {},
               "4.3": {
                   "path": {'Windows': 'C:/tools/cmake/4.3.4/cmake-4.3.4-windows-x86_64/bin',
                            'Darwin': '/Users/runner/Applications/CMake/4.3.4/bin',
@@ -92,8 +92,8 @@ let
               "default": "1.10.2",
               "1.10.2": {
                   "path": {'Windows': f'{windows_choco_root}/ninja/tools',
-                           'Linux': '${playPythonPackages.ninja_1_10_2}/bin',
-                           'Darwin': '${playPythonPackages.ninja_1_10_2}/bin'}
+                           'Linux': '${cfg.packages.ninja_1_10_2}/bin',
+                           'Darwin': '${cfg.packages.ninja_1_10_2}/bin'}
               }
           },
           # This is the non-msys2 mingw, which is 32 bits x86 arch
@@ -152,21 +152,21 @@ let
               "6.x": {"path": {'Linux': "skip-tests",
                                'Windows': 'C:/tools/bazel/6.6.0',
                                'Darwin': '/Users/runner/Applications/bazel/6.6.0'}},
-              "7.x": {"path": {'Linux': '${playPythonPackages.bazel_7}/bin',
+              "7.x": {"path": {'Linux': '${cfg.packages.bazel_7}/bin',
                                'Windows': 'C:/tools/bazel/7.6.2',
-                               'Darwin': '${playPythonPackages.bazel_7}/bin'}},
-              "8.x": {"path": {'Linux': '${playPythonPackages.bazel_8}/bin',
+                               'Darwin': '${cfg.packages.bazel_7}/bin'}},
+              "8.x": {"path": {'Linux': '${cfg.packages.bazel_8}/bin',
                                'Windows': 'C:/tools/bazel/8.4.2',
-                               'Darwin': '${playPythonPackages.bazel_8}/bin'}},
-              "9.x": {"path": {'Linux': '${playPythonPackages.bazel_9}/bin',
+                               'Darwin': '${cfg.packages.bazel_8}/bin'}},
+              "9.x": {"path": {'Linux': '${cfg.packages.bazel_9}/bin',
                                'Windows': 'C:/tools/bazel/9.1.0',
-                               'Darwin': '${playPythonPackages.bazel_9}/bin'}},
+                               'Darwin': '${cfg.packages.bazel_9}/bin'}},
           },
           'premake': {
               "exe": "premake5",
               "default": "5.0.0",
               "5.0.0": {
-                  "path": {'Linux': '${playPythonPackages.premake5}/bin',
+                  "path": {'Linux': '${cfg.packages.premake5}/bin',
                            'Windows': 'skip-tests',
                            'Darwin': 'skip-tests'}
               }
@@ -188,15 +188,15 @@ let
               "exe": "qbs",
               "default": "2.6.0",
               "2.6.0": {
-                  "path": {'Linux': '${playPythonPackages.qbs_2_6_0}/bin'}
+                  "path": {'Linux': '${cfg.packages.qbs_2_6_0}/bin'}
               }
           },
           "git": {
               "exe": "git",
               "default": "wrapped",
               "wrapped": {
-                  "path": {'Linux': '${playPythonPackages.git-wrapped}/bin',
-                           'Darwin': '${playPythonPackages.git-wrapped}/bin'}
+                  "path": {'Linux': '${cfg.packages.git-wrapped}/bin',
+                           'Darwin': '${cfg.packages.git-wrapped}/bin'}
               }
           },
           "scons": {},
@@ -206,15 +206,15 @@ let
               "default": "2026.0",
               "exe": "icpx",
               "2026.0": {
-                  "path": {"Linux": "${playPythonPackages.intel-oneapi-toolkit}/compiler/2026.0/bin"},
-                  "root": {"Linux": "${playPythonPackages.intel-oneapi-toolkit}"}
+                  "path": {"Linux": "${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin"},
+                  "root": {"Linux": "${cfg.packages.intel-oneapi-toolkit}"}
               }
           },
           "ldd": {
               "exe": "ldd",
               "default": "system",
               "system": {
-                  "path": {'Linux': "${playPythonPackages.libc_bin}/bin"}
+                  "path": {'Linux': "${cfg.packages.libc_bin}/bin"}
               }
           }
       }
@@ -223,9 +223,9 @@ let
   };
 in
 {
-  inherit (playPythonPackages) stdenv;
+  inherit (cfg.packages) stdenv;
 
-  packages = with playPythonPackages; [
+  packages = with cfg.packages; [
     clang_20
     cmake_3_15_7
     git-wrapped
@@ -259,9 +259,9 @@ in
 
   enterShell = ''
     export VENV_PATH="$DEVENV_STATE/venv"
-    ${cfg.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements.txt
-    ${cfg.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_server.txt
-    ${cfg.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_dev.txt
+    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements.txt
+    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_server.txt
+    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_dev.txt
   '';
 
   enterTest = ''
