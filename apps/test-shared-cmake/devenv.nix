@@ -6,7 +6,7 @@ let
   cfg = config.playPython;
 in
 {
-  # inherit (cfg.packages) stdenv;
+  inherit (cfg.packages.bazel_8) stdenv;
 
   packages = with cfg.packages; [
     # clang_20
@@ -18,7 +18,7 @@ in
     ninja_1_10_2
     meson
     scons
-    bazel_7
+    bazel_8
     premake5
     qbs_2_6_0
     emscripten

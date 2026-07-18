@@ -229,10 +229,10 @@ let
   };
 in
 {
-  inherit (cfg.packages) stdenv;
+  inherit (cfg.packages.bazel_8) stdenv;
 
   packages = with cfg.packages; [
-    clang_20
+    # clang_20
     cmake_3_15_7
     git-wrapped
     pkg-config_0_28
@@ -242,7 +242,7 @@ in
     ninja_1_10_2
     meson
     scons
-    bazel_7
+    bazel_8
     premake5
     qbs_2_6_0
     emscripten
