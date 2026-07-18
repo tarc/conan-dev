@@ -6,10 +6,10 @@ let
   cfg = config.playPython;
 in
 {
-  inherit (cfg.packages.bazel_8) stdenv;
+  inherit (cfg.packages) stdenv;
 
   packages = with cfg.packages; [
-    # clang_20
+    clang_20
     git-wrapped
     pkg-config_0_28
     autoconf
@@ -18,7 +18,7 @@ in
     ninja_1_10_2
     meson
     scons
-    bazel_8
+    bazel_7
     premake5
     qbs_2_6_0
     emscripten
@@ -72,6 +72,18 @@ in
       conan create . -o "chat/*:shared=True" -o "hello/*:shared=True" --build=missing
   '';
 
+  scripts.bootstrap-mylib.exec = ''
+    set -euo pipefail
+    set -x
+    cd "$DEVENV_ROOT"
+    rm -rf ./mylib
+    mkdir -p mylib
+    cd mylib
+    bazel_output_root_dir=$(mktemp -d)
+    conan new bazel_7_lib -d name=mylib -d version=1.0 -d output_root_dir="$bazel_output_root_dir"
+    conan create .
+  '';
+
   scripts.test-other-client-can-link-cmake.exec = ''
     set -euo pipefail
     set -x
@@ -100,6 +112,13 @@ in
     cd build
     conan install --requires="autoapp/0.1@" -o "chat*:shared=True" -o "hello/*:shared=True" -g VirtualRunEnv
     . ./conanrun.sh && autoapp
+  '';
+
+  scripts.test-base-test-basic-lib.exec = ''
+    set -euo pipefail
+    set -x
+    conan remove "*" -c
+    bootstrap-mylib
   '';
 
   languages.cplusplus = {

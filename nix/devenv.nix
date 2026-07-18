@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 let
@@ -10,6 +11,8 @@ let
   libc_bin = pkgs.multiStdenv.cc.libc_bin;
 
   # Toolchain settings:
+  python_3_11_6 = inputs.nixpkgs-python.packages.${stdenv.system}."3.11.6";
+  python_3_12_3 = inputs.nixpkgs-python.packages.${stdenv.system}."3.12.3";
   cmake_3_15_7 = pkgs.callPackage ./packages/cmake-3.15.7/package.nix { };
   cmake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
   cmake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
@@ -87,6 +90,8 @@ in
         stdenv
         libc_bin
 
+        python_3_11_6
+        python_3_12_3
         cmake_3_15_7
         cmake_3_27_9
         cmake_4_1_2

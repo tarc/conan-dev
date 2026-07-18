@@ -168,6 +168,12 @@ let
                                'Windows': 'C:/tools/bazel/9.1.0',
                                'Darwin': '${cfg.packages.bazel_9}/bin'}},
           },
+          'mylib': {
+              'default': 'all',
+              'all': {
+                  'path': {'Linux': 'skip-tests'}
+              }
+          },
           'premake': {
               "exe": "premake5",
               "default": "5.0.0",
@@ -229,10 +235,12 @@ let
   };
 in
 {
-  inherit (cfg.packages.bazel_8) stdenv;
+  inherit (cfg.packages) stdenv;
 
   packages = with cfg.packages; [
-    # clang_20
+    python_3_11_6
+    python_3_12_3
+    clang_20
     cmake_3_15_7
     git-wrapped
     pkg-config_0_28
@@ -251,15 +259,17 @@ in
     pkgs.coreutils-full
   ];
 
-  languages.python = {
-    enable = true;
-    directory = "./conan";
-    uv = {
+  languages = {
+    python = {
       enable = true;
-      sync.enable = true;
-    };
-    venv = {
-      enable = true;
+      directory = "./conan";
+      uv = {
+        enable = true;
+        sync.enable = true;
+      };
+      venv = {
+        enable = true;
+      };
     };
   };
 
