@@ -6,26 +6,6 @@ let
   cfg = config.playPython;
 in
 {
-  inherit (cfg.packages) stdenv;
-
-  packages = with cfg.packages; [
-    clang_20
-    git-wrapped
-    pkg-config_0_28
-    autoconf
-    automake
-    libtool_2
-    ninja_1_10_2
-    meson
-    scons
-    bazel_7
-    premake5
-    qbs_2_6_0
-    emscripten
-    node
-    intel-oneapi-toolkit
-  ];
-
   scripts.bootstrap-hello.exec = ''
     set -euo pipefail
     set -x
@@ -121,20 +101,56 @@ in
     bootstrap-mylib
   '';
 
+  # inherit (cfg.packages) stdenv;
+
   languages.cplusplus = {
     enable = true;
     cmake = {
-      package = cfg.packages.cmake_3_15_7;
+      package = cfg.packages.cmake_4_1_2;
     };
-    conan = {
-      enable = true;
-      config = {
-        profiles = {
-          settings.compiler."compiler.cppstd" = "17";
-          settings._.build_type = "Release";
+    conan =
+      let
+        c = "'c': '${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin/icpx'";
+        cpp = "'cpp': '${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin/icpx'";
+      in
+      {
+        enable = true;
+        package = cfg.packages.conan_2_30_0;
+        config = {
+          profiles = {
+            settings = {
+              _.arch = "x86_64";
+              compiler."compiler" = "intel-cc";
+              compiler."compiler.mode" = "icx";
+              compiler."compiler.version" = "2026.0";
+              compiler."compiler.libcxx" = "libstdc++";
+              _.build_type = "Release";
+            };
+            conf = {
+              "tools.build:compiler_executables" = "{${c}, ${cpp}}";
+              "tools.intel:installation_path" = "${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin";
+            };
+          };
+          offline = true;
         };
-        offline = true;
       };
-    };
   };
+
+  packages = with cfg.packages; [
+    # clang_20
+    git-wrapped
+    pkg-config_0_28
+    autoconf
+    automake
+    libtool_2
+    ninja_1_10_2
+    meson
+    scons
+    bazel_7
+    premake5
+    qbs_2_6_0
+    emscripten
+    node
+    intel-oneapi-toolkit
+  ];
 }

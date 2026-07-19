@@ -235,28 +235,33 @@ let
   };
 in
 {
-  inherit (cfg.packages) stdenv;
+  # inherit (cfg.packages) stdenv;
+  # inherit (cfg.packages.intel-oneapi-toolkit) stdenv;
+  # stdenv = cfg.packages.libcxxStdenv_useLLVM;
+  # stdenv = cfg.packages.multiStdenv;
 
   packages = with cfg.packages; [
-    python_3_11_6
-    python_3_12_3
-    clang_20
-    cmake_3_15_7
-    git-wrapped
-    pkg-config_0_28
-    autoconf
-    automake
-    libtool_2
-    ninja_1_10_2
-    meson
-    scons
-    bazel_8
-    premake5
-    qbs_2_6_0
-    emscripten
-    node
+    # python_3_11_6
+    # python_3_12_3
+    # clang_20
+    # cmake_3_15_7
+    cmake_4_1_2
+    # git-wrapped
+    # pkg-config_0_28
+    # pkg-config_0_29_2
+    # autoconf
+    # automake
+    # libtool_2
+    # ninja_1_10_2
+    # meson
+    # scons
+    # bazel_8
+    # premake5
+    # qbs_2_6_0
+    # emscripten
+    # node
     intel-oneapi-toolkit
-    pkgs.coreutils-full
+    # pkgs.coreutils-full
   ];
 
   languages = {

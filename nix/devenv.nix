@@ -7,12 +7,16 @@
 }:
 let
   # Bootstrap settings:
-  stdenv = pkgs.multiStdenv;
+  multiStdenv = pkgs.multiStdenv;
   libc_bin = pkgs.multiStdenv.cc.libc_bin;
+  libcxxStdenv_useLLVM = pkgs.overrideCC (pkgs.llvmPackages.libcxxStdenv.override {
+    targetPlatform.useLLVM = true;
+    targetPlatform.linker = "lld";
+  }) pkgs.llvmPackages.clangUseLLVM;
 
   # Toolchain settings:
-  python_3_11_6 = inputs.nixpkgs-python.packages.${stdenv.system}."3.11.6";
-  python_3_12_3 = inputs.nixpkgs-python.packages.${stdenv.system}."3.12.3";
+  python_3_11_6 = inputs.nixpkgs-python.packages.${pkgs.stdenv.system}."3.11.6";
+  python_3_12_3 = inputs.nixpkgs-python.packages.${pkgs.stdenv.system}."3.12.3";
   cmake_3_15_7 = pkgs.callPackage ./packages/cmake-3.15.7/package.nix { };
   cmake_3_27_9 = pkgs.callPackage ./packages/cmake-3.27.9/package.nix { };
   cmake_4_1_2 = pkgs.callPackage ./packages/cmake-4.1.2/package.nix { };
@@ -52,6 +56,8 @@ let
   intel-oneapi-toolkit = pkgs.intel-oneapi-toolkit;
 
   # Tools:
+  conan_2_28_1 = pkgs.callPackage ./packages/conan-2.28.1/package.nix { };
+  conan_2_30_0 = pkgs.callPackage ./packages/conan-2.30.0/package.nix { };
   git-wrapped = pkgs.writeShellApplication {
     name = "git";
     runtimeInputs = [
@@ -87,8 +93,9 @@ in
   config = {
     playPython.packages = lib.mkDefault {
       inherit
-        stdenv
+        multiStdenv
         libc_bin
+        libcxxStdenv_useLLVM
 
         python_3_11_6
         python_3_12_3
@@ -115,6 +122,8 @@ in
         node
         intel-oneapi-toolkit
 
+        conan_2_28_1
+        conan_2_30_0
         git-wrapped
         ;
     };
