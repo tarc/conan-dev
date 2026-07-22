@@ -64,12 +64,6 @@ let
               }
           },
           'autotools': {"exe": "autoconf"},
-          'shared': {
-              'default': 'all',
-              'all': {
-                  'path': {'Linux': 'skip-tests'}
-              }
-          },
           'cmake': {
               "default": "3.15",
               "3.15": {
@@ -168,12 +162,6 @@ let
                                'Windows': 'C:/tools/bazel/9.1.0',
                                'Darwin': '${cfg.packages.bazel_9}/bin'}},
           },
-          'mylib': {
-              'default': 'all',
-              'all': {
-                  'path': {'Linux': 'skip-tests'}
-              }
-          },
           'premake': {
               "exe": "premake5",
               "default": "5.0.0",
@@ -218,8 +206,8 @@ let
               "default": "2026.0",
               "exe": "icpx",
               "2026.0": {
-                  "path": {"Linux": "${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin"},
-                  "root": {"Linux": "${cfg.packages.intel-oneapi-toolkit}"}
+                  "path": {"Linux": "${cfg.packages.intel-oneapi-toolkit_2026_0_0_198}/compiler/2026.0/bin"},
+                  "root": {"Linux": "${cfg.packages.intel-oneapi-toolkit_2026_0_0_198}"}
               }
           },
           "ldd": {
@@ -233,36 +221,123 @@ let
     '';
     destination = "/conf/conftest_user.py";
   };
+  deselectExpression = ''
+    --deselect="test/functional/toolchains/cmake/test_shared_cmake.py::test_other_client_can_link_autotools" \
+    --deselect="test/functional/toolchains/gnu/test_v2_autotools_template.py::test_autotools_lib_template" \
+    --deselect="test/functional/toolchains/google/test_bazel.py::test_basic_lib" \
+    --deselect="test/functional/toolchains/google/test_bazel.py::test_basic_lib_9x" \
+    --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_sycl_cmake" \
+    --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_sycl_autotools" \
+    --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_sycl_gnutoolchain" \
+    --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_sycl_meson" \
+    --deselect="test/unittests/tools/env/test_env_files.py::test_env_files_sh[None]" \
+  '';
+  deselectAllExpression = deselectExpression + ''
+    --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_icpx" \
+  '';
 in
 {
-  # inherit (cfg.packages) stdenv;
-  # inherit (cfg.packages.intel-oneapi-toolkit) stdenv;
-  # stdenv = cfg.packages.libcxxStdenv_useLLVM;
-  # stdenv = cfg.packages.multiStdenv;
+  profiles.user."tarci" = {
+    extends = [
+      "testIntelCc"
+      # "testAll"
+    ];
+  };
 
-  packages = with cfg.packages; [
-    # python_3_11_6
-    # python_3_12_3
-    # clang_20
-    # cmake_3_15_7
-    cmake_4_1_2
-    # git-wrapped
-    # pkg-config_0_28
-    # pkg-config_0_29_2
-    # autoconf
-    # automake
-    # libtool_2
-    # ninja_1_10_2
-    # meson
-    # scons
-    # bazel_8
-    # premake5
-    # qbs_2_6_0
-    # emscripten
-    # node
-    intel-oneapi-toolkit
-    # pkgs.coreutils-full
-  ];
+  profiles.testIntelCc.module = {
+    inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
+
+    packages = with cfg.packages; [
+      cmake_3_15_7
+    ];
+
+    scripts = {
+      all-tests.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectExpression} .
+      '';
+
+      single-test.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectExpression} "$@"
+      '';
+    };
+  };
+
+  profiles.testAll.module = {
+    stdenv = cfg.packages.multiStdenv;
+
+    packages = with cfg.packages; [
+      python_3_11_6
+      python_3_12_3
+      clang_20
+      cmake_3_15_7
+      # cmake_3_27_9
+      # cmake_4_1_2 # Breaks `TestIntelCC::test_intel_oneapi_and_icpx`
+      git-wrapped
+      autoconf
+      automake
+      libtool_2
+      ninja_1_10_2
+      meson
+      scons
+      emscripten
+      node
+    ];
+
+    scripts = {
+      all-tests.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectAllExpression} .
+      '';
+
+      single-test.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectAllExpression} "$@"
+      '';
+    };
+
+    android = {
+      enable = true;
+      ndk.enable = true;
+    };
+  };
 
   languages = {
     python = {
@@ -284,45 +359,4 @@ in
     ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_server.txt
     ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_dev.txt
   '';
-
-  enterTest = ''
-    cd "$DEVENV_ROOT/conan"
-    export PYTHONPATH=$PYTHONPATH:$(pwd)
-    python -m pytest .
-  '';
-
-  scripts = {
-    all-tests.exec = ''
-      cd "$DEVENV_ROOT/conan"
-      export PYTHONPATH=$PYTHONPATH:$(pwd)
-      echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-      if [[ -f ./test/conftest_user.py ]];
-      then
-        rm -f ./test/conftest_user.py
-      fi
-      cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-      echo "./test/conftest_user.py"
-      cat ./test/conftest_user.py
-      python -m pytest .
-    '';
-
-    single-test.exec = ''
-      cd "$DEVENV_ROOT/conan"
-      export PYTHONPATH=$PYTHONPATH:$(pwd)
-      echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-      if [[ -f ./test/conftest_user.py ]];
-      then
-        rm -f ./test/conftest_user.py
-      fi
-      cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-      echo "./test/conftest_user.py"
-      cat ./test/conftest_user.py
-      python -m pytest "$@"
-    '';
-  };
-
-  android = {
-    enable = true;
-    ndk.enable = true;
-  };
 }

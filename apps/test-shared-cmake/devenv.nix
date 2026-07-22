@@ -1,9 +1,22 @@
 {
+  pkgs,
   config,
+  inputs,
   ...
 }:
 let
+  inherit (pkgs.stdenv) system;
   cfg = config.playPython;
+  parseSystemOs = inputs.conan-flake.lib.parsing.parseSystemOs { };
+  parseSystemArch = inputs.conan-flake.lib.parsing.parseSystemArch { };
+
+  # stdenv =
+  # let
+  #   stdenv = pkgs.overrideCC (pkgs.llvmPackages.libcxxStdenv.override {
+  #     targetPlatform.useLLVM = true;
+  #     targetPlatform.linker = "lld";
+  #   }) pkgs.llvmPackages.clangUseLLVM;
+  # in stdenv;
 in
 {
   scripts.bootstrap-hello.exec = ''
@@ -64,6 +77,28 @@ in
     conan create .
   '';
 
+  scripts.bootstrap-intelib.exec = ''
+    set -euo pipefail
+    set -x
+    cd "$DEVENV_ROOT"
+    rm -rf ./intelib
+    mkdir -p intelib
+    cd intelib
+    conan new cmake_lib -d name=intelib -d version=0.1
+    conan create .
+  '';
+
+  scripts.bootstrap-intelapp.exec = ''
+    set -euo pipefail
+    set -x
+    cd "$DEVENV_ROOT"
+    rm -rf ./intelapp
+    mkdir -p intelapp
+    cd intelapp
+    conan new cmake_exe -d name=intelapp -d version=0.1 -d requires=intelib/0.1
+    conan create .
+  '';
+
   scripts.test-other-client-can-link-cmake.exec = ''
     set -euo pipefail
     set -x
@@ -101,25 +136,38 @@ in
     bootstrap-mylib
   '';
 
+  scripts.test-intel-cc.exec = ''
+    set -euo pipefail
+    set -x
+    conan remove "*" -c
+    bootstrap-intelib
+    bootstrap-intelapp
+  '';
+
   # inherit (cfg.packages) stdenv;
+  inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
+  # stdenv = oneapiStdenv; # intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM
+  # inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM) stdenv;
+  # stdenv = cfg.packages.oneapiStdenv;
 
   languages.cplusplus = {
     enable = true;
     cmake = {
-      package = cfg.packages.cmake_4_1_2;
+      package = cfg.packages.cmake_3_27_9;
     };
     conan =
-      let
-        c = "'c': '${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin/icpx'";
-        cpp = "'cpp': '${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin/icpx'";
-      in
+      # let
+      #   c = "'c': '${cfg.packages.intel-oneapi-toolkit_2026_0_0_198}/compiler/2026.0/bin/icpx'";
+      #   cpp = "'cpp': '${cfg.packages.intel-oneapi-toolkit_2026_0_0_198}/compiler/2026.0/bin/icpx'";
+      # in
       {
         enable = true;
-        package = cfg.packages.conan_2_30_0;
+        package = cfg.packages.conan_2_31_0;
         config = {
           profiles = {
             settings = {
-              _.arch = "x86_64";
+              _.os = parseSystemOs system;
+              _.arch = parseSystemArch system;
               compiler."compiler" = "intel-cc";
               compiler."compiler.mode" = "icx";
               compiler."compiler.version" = "2026.0";
@@ -127,8 +175,8 @@ in
               _.build_type = "Release";
             };
             conf = {
-              "tools.build:compiler_executables" = "{${c}, ${cpp}}";
-              "tools.intel:installation_path" = "${cfg.packages.intel-oneapi-toolkit}/compiler/2026.0/bin";
+              # "tools.build:compiler_executables" = "{${c}, ${cpp}}";
+              "tools.intel:installation_path" = "";
             };
           };
           offline = true;
@@ -136,21 +184,20 @@ in
       };
   };
 
-  packages = with cfg.packages; [
-    # clang_20
-    git-wrapped
-    pkg-config_0_28
-    autoconf
-    automake
-    libtool_2
-    ninja_1_10_2
-    meson
-    scons
-    bazel_7
-    premake5
-    qbs_2_6_0
-    emscripten
-    node
-    intel-oneapi-toolkit
-  ];
+  # packages = with cfg.packages; [
+  #   clang_20
+  #   git-wrapped
+  #   pkg-config_0_28
+  #   autoconf
+  #   automake
+  #   libtool_2
+  #   ninja_1_10_2
+  #   meson
+  #   scons
+  #   bazel_7
+  #   premake5
+  #   qbs_2_6_0
+  #   emscripten
+  #   node
+  # ];
 }

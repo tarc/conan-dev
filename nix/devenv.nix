@@ -13,6 +13,34 @@ let
     targetPlatform.useLLVM = true;
     targetPlatform.linker = "lld";
   }) pkgs.llvmPackages.clangUseLLVM;
+  intel-oneapi-toolkit_2026_0_0_198 =
+    pkgs.callPackage ./packages/intel-oneapi-toolkit-2026.0.0.198/package.nix
+      { };
+  intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM =
+    pkgs.callPackage ./packages/intel-oneapi-toolkit-2026.0.0.198/package.nix
+      { stdenv = libcxxStdenv_useLLVM; };
+
+  kit = intel-oneapi-toolkit_2026_0_0_198;
+  oneapiCCUnwrapped = kit.stdenv.cc.cc.overrideAttrs (old: {
+    passthru = (old.passthru or { }) // {
+      langCC = true;
+    };
+  });
+  oneapiCC = pkgs.wrapCCWith {
+    cc = oneapiCCUnwrapped;
+    gccForLibs = pkgs.gcc.cc;
+    extraPackages = [ kit ];
+    extraBuildCommands = ''
+      ln -s $out/bin/clang++ $out/bin/icpx
+      ln -s $out/bin/clang   $out/bin/icx
+
+      echo "export CXX=\"$out/bin/icpx\"" >> $out/nix-support/setup-hook
+      echo "export CC=\"$out/bin/icx\"" >> $out/nix-support/setup-hook
+
+      echo "export ONEAPI_ROOT=\"${kit}\"" >> $out/nix-support/setup-hook
+    '';
+  };
+  oneapiStdenv = pkgs.overrideCC pkgs.stdenv oneapiCC;
 
   # Toolchain settings:
   python_3_11_6 = inputs.nixpkgs-python.packages.${pkgs.stdenv.system}."3.11.6";
@@ -53,11 +81,11 @@ let
   premake5 = pkgs.premake5;
   emscripten = pkgs.emscripten;
   node = pkgs.nodejs;
-  intel-oneapi-toolkit = pkgs.intel-oneapi-toolkit;
 
   # Tools:
   conan_2_28_1 = pkgs.callPackage ./packages/conan-2.28.1/package.nix { };
   conan_2_30_0 = pkgs.callPackage ./packages/conan-2.30.0/package.nix { };
+  conan_2_31_0 = pkgs.callPackage ./packages/conan-develop2/package.nix { };
   git-wrapped = pkgs.writeShellApplication {
     name = "git";
     runtimeInputs = [
@@ -96,6 +124,9 @@ in
         multiStdenv
         libc_bin
         libcxxStdenv_useLLVM
+        intel-oneapi-toolkit_2026_0_0_198
+        intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM
+        oneapiStdenv
 
         python_3_11_6
         python_3_12_3
@@ -120,10 +151,10 @@ in
         premake5
         emscripten
         node
-        intel-oneapi-toolkit
 
         conan_2_28_1
         conan_2_30_0
+        conan_2_31_0
         git-wrapped
         ;
     };
