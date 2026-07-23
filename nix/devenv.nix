@@ -108,6 +108,7 @@ let
       fi
     '';
   };
+  embedmd = pkgs.callPackage ./packages/embedmd/package.nix { };
 in
 {
   options = {
@@ -156,7 +157,27 @@ in
         conan_2_30_0
         conan_2_31_0
         git-wrapped
+        embedmd
         ;
+    };
+
+    packages = [
+      config.playPython.packages.embedmd
+    ];
+
+    git-hooks = {
+      hooks = {
+        embedmd = {
+          enable = true;
+          name = "Embed code snippets in README";
+          entry = "embedmd ${config.git.root}/README.md";
+          types = [
+            "text"
+            "nix"
+          ];
+          pass_filenames = false;
+        };
+      };
     };
 
     treefmt = {

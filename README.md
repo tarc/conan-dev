@@ -14,13 +14,25 @@ After the above commands finish executing:
 init-conan-submodule
 ```
 
-## Profile: `testIntelCc`
+## Profile activation
+
+[embedmd]:# (./apps/conan/devenv.nix nix /.*profiles.user/ /# profiles.user/ dedent)
+```nix
+profiles.user."tarci" = {
+  extends = [
+    # "testIntelCc"
+    "testAll"
+  ];
+}; # profiles.user
+```
+
+### Profile: `testIntelCc`
 
 ```sh
 single-test test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC -s
 ```
 
-## Profile: `testAll`
+### Profile: `testAll`
 
 ```sh
 all-tests

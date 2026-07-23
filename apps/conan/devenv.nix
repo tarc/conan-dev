@@ -242,7 +242,7 @@ in
       # "testIntelCc"
       "testAll"
     ];
-  };
+  }; # profiles.user
 
   profiles.testIntelCc.module = {
     inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
@@ -358,6 +358,13 @@ in
       cd "$DEVENV_ROOT/conan"
       git checkout nix-tests
       git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
+    '';
+
+    update-conan-submodule.exec = ''
+      cd "$DEVENV_ROOT/conan"
+      git checkout nix-tests
+      git fetch upstream
+      git rebase upstream/develop2
     '';
   };
 

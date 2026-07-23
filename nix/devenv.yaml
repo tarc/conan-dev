@@ -1,5 +1,9 @@
-allow_unfree: true
 inputs:
+  git-hooks:
+    url: github:cachix/git-hooks.nix
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
   nixpkgs:
     url: github:cachix/devenv-nixpkgs/rolling
   nixpkgs-python:
@@ -12,3 +16,4 @@ inputs:
     inputs:
       nixpkgs:
         follows: nixpkgs
+allow_unfree: true

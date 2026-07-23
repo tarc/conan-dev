@@ -9,14 +9,6 @@ let
   cfg = config.playPython;
   parseSystemOs = inputs.conan-flake.lib.parsing.parseSystemOs { };
   parseSystemArch = inputs.conan-flake.lib.parsing.parseSystemArch { };
-
-  # stdenv =
-  # let
-  #   stdenv = pkgs.overrideCC (pkgs.llvmPackages.libcxxStdenv.override {
-  #     targetPlatform.useLLVM = true;
-  #     targetPlatform.linker = "lld";
-  #   }) pkgs.llvmPackages.clangUseLLVM;
-  # in stdenv;
 in
 {
   scripts.bootstrap-hello.exec = ''
@@ -144,44 +136,34 @@ in
     bootstrap-intelapp
   '';
 
-  # inherit (cfg.packages) stdenv;
   inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
-  # stdenv = oneapiStdenv; # intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM
-  # inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM) stdenv;
-  # stdenv = cfg.packages.oneapiStdenv;
 
   languages.cplusplus = {
     enable = true;
     cmake = {
       package = cfg.packages.cmake_3_27_9;
     };
-    conan =
-      # let
-      #   c = "'c': '${cfg.packages.intel-oneapi-toolkit_2026_0_0_198}/compiler/2026.0/bin/icpx'";
-      #   cpp = "'cpp': '${cfg.packages.intel-oneapi-toolkit_2026_0_0_198}/compiler/2026.0/bin/icpx'";
-      # in
-      {
-        enable = true;
-        package = cfg.packages.conan_2_31_0;
-        config = {
-          profiles = {
-            settings = {
-              _.os = parseSystemOs system;
-              _.arch = parseSystemArch system;
-              compiler."compiler" = "intel-cc";
-              compiler."compiler.mode" = "icx";
-              compiler."compiler.version" = "2026.0";
-              compiler."compiler.libcxx" = "libstdc++";
-              _.build_type = "Release";
-            };
-            conf = {
-              # "tools.build:compiler_executables" = "{${c}, ${cpp}}";
-              "tools.intel:installation_path" = "";
-            };
+    conan = {
+      enable = true;
+      package = cfg.packages.conan_2_31_0;
+      config = {
+        profiles = {
+          settings = {
+            _.os = parseSystemOs system;
+            _.arch = parseSystemArch system;
+            compiler."compiler" = "intel-cc";
+            compiler."compiler.mode" = "icx";
+            compiler."compiler.version" = "2026.0";
+            compiler."compiler.libcxx" = "libstdc++";
+            _.build_type = "Release";
           };
-          offline = true;
+          conf = {
+            "tools.intel:installation_path" = "";
+          };
         };
+        offline = true;
       };
+    };
   };
 
   # packages = with cfg.packages; [
