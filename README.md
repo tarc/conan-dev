@@ -17,14 +17,12 @@ init-conan-submodule
 ## Profile: `testIntelCc`
 
 ```sh
-cd apps/conan
 single-test test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC -s
 ```
 
 ## Profile: `testAll`
 
 ```sh
-cd apps/conan
 all-tests
 ```
 
