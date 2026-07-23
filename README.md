@@ -16,9 +16,9 @@ init-conan-submodule
 
 ## Profile activation
 
-[embedmd]:# (./apps/conan/devenv.nix nix /.*profiles.user/ /# profiles.user/ dedent)
+[embedmd]:# (./apps/conan/devenv.nix nix /.*profiles.user/ /# profiles.user/ s/tarci/username/ dedent)
 ```nix
-profiles.user."tarci" = {
+profiles.user."username" = {
   extends = [
     # "testIntelCc"
     "testAll"
