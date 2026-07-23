@@ -239,8 +239,8 @@ in
 {
   profiles.user."tarci" = {
     extends = [
-      "testIntelCc"
-      # "testAll"
+      # "testIntelCc"
+      "testAll"
     ];
   };
 
@@ -351,6 +351,14 @@ in
         enable = true;
       };
     };
+  };
+
+  scripts = {
+    init-conan-submodule.exec = ''
+      cd "$DEVENV_ROOT/conan"
+      git checkout nix-tests
+      git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
+    '';
   };
 
   enterShell = ''

@@ -1,5 +1,19 @@
 # Conan development environment (devenv)
 
+```sh
+git clone ssh://git@codeberg.org/tarcisio/conan-dev.git
+cd conan-dev
+git submodule update --init --remote
+cd apps/conan
+devenv allow
+```
+
+After the above commands finish executing:
+
+```sh
+init-conan-submodule
+```
+
 ## Profile: `testIntelCc`
 
 ```sh
