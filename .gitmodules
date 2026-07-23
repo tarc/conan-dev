@@ -1,3 +1,4 @@
 [submodule "conan"]
 	path = apps/conan/conan
-	url = git@github.com:conan-io/conan.git
+	url = git@github.com:tarc/conan.git
+	branch = nix-tests
