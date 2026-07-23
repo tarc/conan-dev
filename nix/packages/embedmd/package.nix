@@ -3,7 +3,6 @@
   fetchFromGitHub,
   makeWrapper,
 }:
-
 buildGoModule (_finalAttrs: {
   pname = "embedmd";
   version = "1.0.0";

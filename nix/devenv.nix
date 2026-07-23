@@ -109,6 +109,8 @@ let
     '';
   };
   embedmd = pkgs.callPackage ./packages/embedmd/package.nix { };
+  mdsh_0_9_2 = pkgs.callPackage ./packages/mdsh-0.9.2/package.nix { };
+  mdsh_0_9_3 = pkgs.callPackage ./packages/mdsh-0.9.3/package.nix { mdsh = mdsh_0_9_2; };
 in
 {
   options = {
@@ -158,11 +160,21 @@ in
         conan_2_31_0
         git-wrapped
         embedmd
+        mdsh_0_9_2
+        mdsh_0_9_3
         ;
     };
 
     packages = [
-      config.playPython.packages.embedmd
+      pkgs.embedmd
+      pkgs.mdsh
+    ];
+
+    overlays = [
+      (_final: _prev: {
+        embedmd = config.playPython.packages.embedmd;
+        mdsh = config.playPython.packages.mdsh_0_9_3;
+      })
     ];
 
     git-hooks = {
