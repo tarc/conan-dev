@@ -113,7 +113,11 @@ let
   mdsh_0_9_3 = pkgs.callPackage ./packages/mdsh-0.9.3/package.nix { mdsh = mdsh_0_9_2; };
 
   # Configuration
-  conftestUser = pkgs.callPackage ./packages/conftest-user/package.nix { };
+  cfg = config.intelOpenapiToolkit;
+  intelOpenapiToolkit = if cfg.enable then cfg.package else null;
+  conftestUser = pkgs.callPackage ./packages/conftest-user/package.nix {
+    intelOpenapiToolkit = intelOpenapiToolkit;
+  };
 in
 {
   options = {
@@ -121,6 +125,15 @@ in
       type = config.lib.types.outputOf (lib.types.lazyAttrsOf (lib.types.raw or lib.types.unspecified));
       description = "The package set used in play-python projects";
       defaultText = lib.literalMD "The set of packages that are known to work with Conan tests";
+    };
+    intelOpenapiToolkit = {
+      enable = lib.mkEnableOption "Enable Intel oneAPI Toolkit testing";
+      package = lib.mkOption {
+        type = lib.types.package;
+        default = pkgs.intel-oneapi-toolkit_2026_0_0_198;
+        defaultText = lib.literalExpression "pkgs.intel-oneapi-toolkit_2026_0_0_198";
+        description = "The Intel oneAPI Toolkit package to use.";
+      };
     };
   };
 
