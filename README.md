@@ -43,6 +43,8 @@ and checkout a specific branch with minor changes on the test suite:
 [embedmd]:# (./apps/conan/devenv.nix nix /.*init-conan-submodule/ /'';/ dedent)
 ```nix
 init-conan-submodule.exec = ''
+  set -euo pipefail
+  set -x
   git submodule update --init --remote
   cd "$DEVENV_ROOT/conan"
   git checkout nix-tests
@@ -54,14 +56,104 @@ init-conan-submodule.exec = ''
 
 Two profiles are available:
 
-[embedmd]:# (./apps/conan/devenv.nix nix /.*profiles.user/ /# profiles.user/ s/tarci/username/ dedent)
+[embedmd]:# (./apps/conan/devenv.nix nix /.*profiles = {/ /}; # profiles/ dedent)
 ```nix
-profiles.user."username" = {
-  extends = [
-    # "testIntelCc"
-    "testAll"
-  ];
-}; # profiles.user
+profiles = {
+  testIntelCc.module = {
+    inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
+
+    packages = with cfg.packages; [
+      cmake_3_15_7
+    ];
+
+    scripts = {
+      all-tests.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectExpression} .
+      '';
+
+      single-test.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectExpression} "$@"
+      '';
+    };
+  };
+
+  testAll.module = {
+    stdenv = cfg.packages.multiStdenv;
+
+    packages = with cfg.packages; [
+      python_3_11_6
+      python_3_12_3
+      clang_20
+      cmake_3_15_7
+      # cmake_3_27_9
+      # cmake_4_1_2 # Breaks `TestIntelCC::test_intel_oneapi_and_icpx`
+      git-wrapped
+      autoconf
+      automake
+      libtool_2
+      ninja_1_10_2
+      meson
+      scons
+      emscripten
+      node
+    ];
+
+    scripts = {
+      all-tests.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectAllExpression} .
+      '';
+
+      single-test.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectAllExpression} "$@"
+      '';
+    };
+
+    android = {
+      enable = true;
+      ndk.enable = true;
+    };
+  };
+}; # profiles
 ```
 
 ### Profile: `testIntelCc`

@@ -9,3 +9,4 @@ inputs:
 allow_unfree: true
 imports:
   - ../../nix
+profile: testAll

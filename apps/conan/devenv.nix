@@ -237,107 +237,102 @@ let
   '';
 in
 {
-  profiles.user."tarci" = {
-    extends = [
-      # "testIntelCc"
-      "testAll"
-    ];
-  }; # profiles.user
+  profiles = {
+    testIntelCc.module = {
+      inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
 
-  profiles.testIntelCc.module = {
-    inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
+      packages = with cfg.packages; [
+        cmake_3_15_7
+      ];
 
-    packages = with cfg.packages; [
-      cmake_3_15_7
-    ];
+      scripts = {
+        all-tests.exec = ''
+          cd "$DEVENV_ROOT/conan"
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          if [[ -f ./test/conftest_user.py ]];
+          then
+            rm -f ./test/conftest_user.py
+          fi
+          cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+          echo "./test/conftest_user.py"
+          cat ./test/conftest_user.py
+          python -m pytest ${deselectExpression} .
+        '';
 
-    scripts = {
-      all-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectExpression} .
-      '';
-
-      single-test.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectExpression} "$@"
-      '';
-    };
-  };
-
-  profiles.testAll.module = {
-    stdenv = cfg.packages.multiStdenv;
-
-    packages = with cfg.packages; [
-      python_3_11_6
-      python_3_12_3
-      clang_20
-      cmake_3_15_7
-      # cmake_3_27_9
-      # cmake_4_1_2 # Breaks `TestIntelCC::test_intel_oneapi_and_icpx`
-      git-wrapped
-      autoconf
-      automake
-      libtool_2
-      ninja_1_10_2
-      meson
-      scons
-      emscripten
-      node
-    ];
-
-    scripts = {
-      all-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectAllExpression} .
-      '';
-
-      single-test.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectAllExpression} "$@"
-      '';
+        single-test.exec = ''
+          cd "$DEVENV_ROOT/conan"
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          if [[ -f ./test/conftest_user.py ]];
+          then
+            rm -f ./test/conftest_user.py
+          fi
+          cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+          echo "./test/conftest_user.py"
+          cat ./test/conftest_user.py
+          python -m pytest ${deselectExpression} "$@"
+        '';
+      };
     };
 
-    android = {
-      enable = true;
-      ndk.enable = true;
+    testAll.module = {
+      stdenv = cfg.packages.multiStdenv;
+
+      packages = with cfg.packages; [
+        python_3_11_6
+        python_3_12_3
+        clang_20
+        cmake_3_15_7
+        # cmake_3_27_9
+        # cmake_4_1_2 # Breaks `TestIntelCC::test_intel_oneapi_and_icpx`
+        git-wrapped
+        autoconf
+        automake
+        libtool_2
+        ninja_1_10_2
+        meson
+        scons
+        emscripten
+        node
+      ];
+
+      scripts = {
+        all-tests.exec = ''
+          cd "$DEVENV_ROOT/conan"
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          if [[ -f ./test/conftest_user.py ]];
+          then
+            rm -f ./test/conftest_user.py
+          fi
+          cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+          echo "./test/conftest_user.py"
+          cat ./test/conftest_user.py
+          python -m pytest ${deselectAllExpression} .
+        '';
+
+        single-test.exec = ''
+          cd "$DEVENV_ROOT/conan"
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          if [[ -f ./test/conftest_user.py ]];
+          then
+            rm -f ./test/conftest_user.py
+          fi
+          cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+          echo "./test/conftest_user.py"
+          cat ./test/conftest_user.py
+          python -m pytest ${deselectAllExpression} "$@"
+        '';
+      };
+
+      android = {
+        enable = true;
+        ndk.enable = true;
+      };
     };
-  };
+  }; # profiles
 
   languages = {
     python = {
@@ -355,6 +350,8 @@ in
 
   scripts = {
     init-conan-submodule.exec = ''
+      set -euo pipefail
+      set -x
       git submodule update --init --remote
       cd "$DEVENV_ROOT/conan"
       git checkout nix-tests
@@ -363,6 +360,7 @@ in
 
     get-conan-submodule.exec = ''
       set -euo pipefail
+      set -x
       cd "$DEVENV_ROOT"
       path=$(git config --file ../../.gitmodules --get submodule.conan.path)
       url=$(git config --file ../../.gitmodules --get submodule.conan.url)
@@ -373,6 +371,8 @@ in
     '';
 
     update-conan-submodule.exec = ''
+      set -euo pipefail
+      set -x
       cd "$DEVENV_ROOT/conan"
       git checkout nix-tests
       git fetch upstream
