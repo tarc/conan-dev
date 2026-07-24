@@ -4,7 +4,7 @@ when:
     path:
       exclude: ["README.md", ".gitignore"]
 steps:
-  - name: dev
+  - name: all-tests
     image: nixos/nix
     commands:
       - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
