@@ -1,12 +1,10 @@
 {
-  pkgs,
-  lib,
   config,
   ...
 }:
 let
   python = config.languages.python;
-  cfg = config.playPython;
+  cfg = config.conanDev;
 
   # Settings:
   deselectExpression = ''

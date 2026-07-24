@@ -121,7 +121,7 @@ let
 in
 {
   options = {
-    playPython.packages = pkgs.lib.mkOption {
+    conanDev.packages = pkgs.lib.mkOption {
       type = config.lib.types.outputOf (lib.types.lazyAttrsOf (lib.types.raw or lib.types.unspecified));
       description = "The package set used in play-python projects";
       defaultText = lib.literalMD "The set of packages that are known to work with Conan tests";
@@ -138,7 +138,7 @@ in
   };
 
   config = {
-    playPython.packages = lib.mkDefault {
+    conanDev.packages = lib.mkDefault {
       inherit
         multiStdenv
         libc_bin
@@ -191,7 +191,7 @@ in
 
     overlays = [
       (_final: _prev: {
-        inherit (config.playPython.packages)
+        inherit (config.conanDev.packages)
           cmake_3_15_7
           cmake_3_27_9
           cmake_4_1_2
@@ -205,7 +205,7 @@ in
           qbs_2_6_0
           ;
 
-        mdsh = config.playPython.packages.mdsh_0_9_3;
+        mdsh = config.conanDev.packages.mdsh_0_9_3;
       })
     ];
 

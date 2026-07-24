@@ -6,7 +6,7 @@
 }:
 let
   inherit (pkgs.stdenv) system;
-  cfg = config.playPython;
+  cfg = config.conanDev;
   parseSystemOs = inputs.conan-flake.lib.parsing.parseSystemOs { };
   parseSystemArch = inputs.conan-flake.lib.parsing.parseSystemArch { };
 in
