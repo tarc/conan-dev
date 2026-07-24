@@ -355,6 +355,7 @@ in
 
   scripts = {
     init-conan-submodule.exec = ''
+      git submodule update --init --remote
       cd "$DEVENV_ROOT/conan"
       git checkout nix-tests
       git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null

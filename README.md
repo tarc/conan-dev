@@ -8,13 +8,11 @@ _A [devenv](https://devenv.sh/) powered project._
 
 </div>
 
-To get started, clone this repository and initialize its git submodule:
+To get started, clone this repository and allow `devenv` to set up the environment:
 
 ```sh
 git clone ssh://git@codeberg.org/tarcisio/conan-dev.git
-cd conan-dev
-git submodule update --init --remote
-cd apps/conan
+cd conan-dev/apps/conan
 devenv allow
 ```
 
@@ -22,6 +20,18 @@ After the above commands finish executing, run the following:
 
 ```sh
 init-conan-submodule
+```
+
+The `init-conan-submodule` script initializes a git submodule with the Conan source code, among other things:
+
+[embedmd]:# (./apps/conan/devenv.nix nix /.*init-conan-submodule/ /'';/ dedent)
+```nix
+init-conan-submodule.exec = ''
+  git submodule update --init --remote
+  cd "$DEVENV_ROOT/conan"
+  git checkout nix-tests
+  git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
+'';
 ```
 
 ## Profile activation
