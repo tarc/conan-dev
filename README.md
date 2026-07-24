@@ -22,7 +22,17 @@ After the above commands finish executing, run the following:
 init-conan-submodule
 ```
 
-The `init-conan-submodule` script initializes a git submodule with the Conan source code, among other things:
+The `init-conan-submodule` script initializes a git submodule with a fork of the [Conan source code repository](https://github.com/conan-io/conan):
+
+[embedmd]:# (./.gitmodules)
+```gitmodules
+[submodule "conan"]
+	path = apps/conan/conan
+	url = git@github.com:tarc/conan.git
+	branch = nix-tests
+```
+
+and checkout a specific branch with minor changes on the test suite:
 
 [embedmd]:# (./apps/conan/devenv.nix nix /.*init-conan-submodule/ /'';/ dedent)
 ```nix
@@ -35,6 +45,8 @@ init-conan-submodule.exec = ''
 ```
 
 ## Profile activation
+
+Two profiles are available:
 
 [embedmd]:# (./apps/conan/devenv.nix nix /.*profiles.user/ /# profiles.user/ s/tarci/username/ dedent)
 ```nix
