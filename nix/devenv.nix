@@ -111,6 +111,9 @@ let
   embedmd = pkgs.callPackage ./packages/embedmd/package.nix { };
   mdsh_0_9_2 = pkgs.callPackage ./packages/mdsh-0.9.2/package.nix { };
   mdsh_0_9_3 = pkgs.callPackage ./packages/mdsh-0.9.3/package.nix { mdsh = mdsh_0_9_2; };
+
+  # Configuration
+  conftestUser = pkgs.callPackage ./packages/conftest-user/package.nix { };
 in
 {
   options = {
@@ -163,6 +166,8 @@ in
         embedmd
         mdsh_0_9_2
         mdsh_0_9_3
+
+        conftestUser
         ;
     };
 
@@ -173,7 +178,20 @@ in
 
     overlays = [
       (_final: _prev: {
-        embedmd = config.playPython.packages.embedmd;
+        inherit (config.playPython.packages)
+          cmake_3_15_7
+          cmake_3_27_9
+          cmake_4_1_2
+          embedmd
+          git-wrapped
+          intel-oneapi-toolkit_2026_0_0_198
+          libc_bin
+          ninja_1_10_2
+          pkg-config_0_28
+          pkg-config_0_29_2
+          qbs_2_6_0
+          ;
+
         mdsh = config.playPython.packages.mdsh_0_9_3;
       })
     ];

@@ -75,7 +75,7 @@ profiles = {
         then
           rm -f ./test/conftest_user.py
         fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
         echo "./test/conftest_user.py"
         cat ./test/conftest_user.py
         python -m pytest ${deselectExpression} .
@@ -89,7 +89,7 @@ profiles = {
         then
           rm -f ./test/conftest_user.py
         fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
         echo "./test/conftest_user.py"
         cat ./test/conftest_user.py
         python -m pytest ${deselectExpression} "$@"
@@ -127,7 +127,7 @@ profiles = {
         then
           rm -f ./test/conftest_user.py
         fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
         echo "./test/conftest_user.py"
         cat ./test/conftest_user.py
         python -m pytest ${deselectAllExpression} .
@@ -141,7 +141,7 @@ profiles = {
         then
           rm -f ./test/conftest_user.py
         fi
-        cp ${conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
         echo "./test/conftest_user.py"
         cat ./test/conftest_user.py
         python -m pytest ${deselectAllExpression} "$@"

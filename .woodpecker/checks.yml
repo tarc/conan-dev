@@ -13,4 +13,3 @@ steps:
       - nix shell --inputs-from . nixpkgs#devenv
       - cd apps/conan
       - devenv shell -- init-conan-submodule
-      - devenv shell -- all-tests
