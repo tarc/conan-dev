@@ -28,7 +28,7 @@ The `init-conan-submodule` script initializes a git submodule with a fork of the
 ```gitmodules
 [submodule "conan"]
 	path = apps/conan/conan
-	url = git@github.com:tarc/conan.git
+	url = https://github.com/tarc/conan.git
 	branch = nix-tests
 ```
 

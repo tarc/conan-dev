@@ -361,11 +361,38 @@ in
       git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
     '';
 
+    get-conan-submodule.exec = ''
+      set -euo pipefail
+      cd "$DEVENV_ROOT"
+      path=$(git config --file ../../.gitmodules --get submodule.conan.path)
+      url=$(git config --file ../../.gitmodules --get submodule.conan.url)
+      branch=$(git config --file ../../.gitmodules --get submodule.conan.branch)
+      echo "Conan submodule path: ''${path@Q}"
+      echo "Conan submodule url: ''${url@Q}"
+      echo "Conan submodule branch: ''${branch@Q}"
+    '';
+
     update-conan-submodule.exec = ''
       cd "$DEVENV_ROOT/conan"
       git checkout nix-tests
       git fetch upstream
       git rebase upstream/develop2
+    '';
+
+    change-conan-submodule.exec = ''
+      set -euo pipefail
+      cd "$DEVENV_ROOT"
+      path=$(git config --file ../../.gitmodules --get submodule.conan.path)
+      url=$(git config --file ../../.gitmodules --get submodule.conan.url)
+      if [ -z "''${1:-}" ]; then
+          echo "Error: Missing required argument"
+          echo "Usage: $0 <URL>"
+          exit 1
+      fi
+      if [[ ''${1:-} != ''${url:-} ]]; then
+        echo "Updating Conan submodule from ''${url@Q} to ''${1@Q}"
+        git submodule set-url -- "$path" "$1"
+      fi
     '';
   };
 
