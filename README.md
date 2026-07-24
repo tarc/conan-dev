@@ -6,6 +6,12 @@
 
 _A [devenv](https://devenv.sh/) powered project._
 
+<p>
+<a href="https://ci.codeberg.org/repos/17706" target="_blank">
+  <img src="https://ci.codeberg.org/api/badges/17706/status.svg" alt="status-badge" />
+</a>
+</p>
+
 </div>
 
 To get started, clone this repository and allow `devenv` to set up the environment:
