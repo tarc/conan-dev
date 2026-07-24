@@ -1,6 +1,10 @@
 <div align="center">
 
-# Conan development environment &mdash; `devenv`
+# Conan development environment
+
+**Development tools for the [Conan C/C++ Package Manager](https://conan.io/)**
+
+_A [devenv](https://devenv.sh/) powered project._
 
 </div>
 
