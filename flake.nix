@@ -34,15 +34,6 @@
         nixpkgs-regression.follows = "";
       };
     };
-    cachix = {
-      url = "github:cachix/cachix/latest";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
-        git-hooks.follows = "git-hooks";
-        devenv.follows = "";
-      };
-    };
     nixd = {
       url = "github:nix-community/nixd";
       inputs = {
