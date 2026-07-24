@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:cachix/devenv-nixpkgs/main";
+    nixpkgs-lib.url = "github:cachix/devenv-nixpkgs/main";
     devenv.url = "github:cachix/devenv";
     flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks.url = "github:cachix/git-hooks.nix";
