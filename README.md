@@ -8,6 +8,8 @@ _A [devenv](https://devenv.sh/) powered project._
 
 </div>
 
+To get started, clone this repository and initialize its git submodule:
+
 ```sh
 git clone ssh://git@codeberg.org/tarcisio/conan-dev.git
 cd conan-dev
@@ -16,7 +18,7 @@ cd apps/conan
 devenv allow
 ```
 
-After the above commands finish executing:
+After the above commands finish executing, run the following:
 
 ```sh
 init-conan-submodule
