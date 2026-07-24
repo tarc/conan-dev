@@ -140,6 +140,7 @@ in
       set -x
       git submodule update --init --remote
       cd "$DEVENV_ROOT/conan"
+      git fetch origin
       git checkout nix-tests
       git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
     '';
@@ -160,6 +161,7 @@ in
       set -euo pipefail
       set -x
       cd "$DEVENV_ROOT/conan"
+      git fetch origin
       git checkout nix-tests
       git fetch upstream
       git rebase upstream/develop2
