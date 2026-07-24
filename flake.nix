@@ -30,10 +30,6 @@
         flake-parts.follows = "flake-parts";
       };
     };
-    crate2nix = {
-      url = "github:rossng/crate2nix/ba5dd398e31ee422fbe021767eb83b0650303a6e";
-      flake = false;
-    };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
