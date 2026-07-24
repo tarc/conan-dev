@@ -23,17 +23,6 @@
         nixpkgs-lib.follows = "nixpkgs";
       };
     };
-    nix = {
-      url = "github:cachix/nix/devenv-2.34";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
-        flake-parts.follows = "flake-parts";
-        git-hooks-nix.follows = "git-hooks";
-        nixpkgs-23-11.follows = "";
-        nixpkgs-regression.follows = "";
-      };
-    };
     nixd = {
       url = "github:nix-community/nixd";
       inputs = {
