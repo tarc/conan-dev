@@ -1,21 +1,63 @@
 {
   inputs = {
-    nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
-    nixpkgs-lib.url = "github:cachix/devenv-nixpkgs/rolling";
-    devenv.url = "github:cachix/devenv";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    git-hooks.url = "github:cachix/git-hooks.nix";
-    mk-shell-bin.url = "github:tarc/nix-mk-shell-bin";
-    nix2container.url = "github:nlewo/nix2container";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
 
-    devenv.inputs.nixpkgs.follows = "nixpkgs";
-    devenv.inputs.flake-parts.follows = "flake-parts";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs-lib";
-    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
-    git-hooks.inputs.flake-parts.follows = "flake-parts";
-    nix2container.inputs.nixpkgs.follows = "nixpkgs";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:cachix/devenv-nixpkgs/rolling";
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+      };
+    };
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs = {
+        nixpkgs-lib.follows = "nixpkgs";
+      };
+    };
+    nix = {
+      url = "github:cachix/nix/devenv-2.34";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+        flake-parts.follows = "flake-parts";
+        git-hooks-nix.follows = "git-hooks";
+        nixpkgs-23-11.follows = "";
+        nixpkgs-regression.follows = "";
+      };
+    };
+    cachix = {
+      url = "github:cachix/cachix/latest";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-compat.follows = "flake-compat";
+        git-hooks.follows = "git-hooks";
+        devenv.follows = "";
+      };
+    };
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+      };
+    };
+    crate2nix = {
+      url = "github:rossng/crate2nix/ba5dd398e31ee422fbe021767eb83b0650303a6e";
+      flake = false;
+    };
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+      flake = false;
+    };
   };
 
   outputs =
