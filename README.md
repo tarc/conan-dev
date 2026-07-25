@@ -10,6 +10,9 @@ _A [devenv](https://devenv.sh/) powered project._
 <a href="https://ci.codeberg.org/repos/17706" target="_blank">
   <img src="https://ci.codeberg.org/api/badges/17706/status.svg" alt="status-badge" />
 </a>
+<a href="https://devenv.sh" target="_blank">
+  <img src="https://devenv.sh/assets/devenv-badge.svg"/>
+</a>
 </p>
 
 </div>
