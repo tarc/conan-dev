@@ -4,7 +4,7 @@ when:
     path:
       exclude: ["README.md", ".gitignore"]
 steps:
-  - name: all-tests
+  - name: functional-tests
     image: nixos/nix
     commands:
       - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
@@ -12,4 +12,4 @@ steps:
       - echo 'extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM=' >> /etc/nix/nix.conf
       - nix shell --inputs-from . nixpkgs#devenv
       - cd apps/conan
-      - devenv shell -- all-tests
+      - devenv shell -- functional-tests

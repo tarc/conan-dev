@@ -47,7 +47,6 @@ init-conan-submodule.exec = ''
   set -x
   git submodule update --init --remote
   cd "$DEVENV_ROOT/conan"
-  git fetch origin
   git checkout nix-tests
   git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
 '';
@@ -132,6 +131,20 @@ profiles = {
         echo "./test/conftest_user.py"
         cat ./test/conftest_user.py
         python -m pytest ${deselectAllExpression} .
+      '';
+
+      functional-tests.exec = ''
+        cd "$DEVENV_ROOT/conan"
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
+        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+        if [[ -f ./test/conftest_user.py ]];
+        then
+          rm -f ./test/conftest_user.py
+        fi
+        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+        echo "./test/conftest_user.py"
+        cat ./test/conftest_user.py
+        python -m pytest ${deselectAllExpression} test/functional/
       '';
 
       single-test.exec = ''
