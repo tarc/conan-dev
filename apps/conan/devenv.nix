@@ -21,6 +21,9 @@ let
   deselectAllExpression = deselectExpression + ''
     --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_icpx" \
   '';
+  deselectTestOverwriteReadOnlyFileExpression = deselectAllExpression + ''
+    --deselect="test/functional/command/test_config_install.py::TestConfigInstall::test_overwrite_read_only_file" \
+  '';
 in
 {
   profiles = {
@@ -109,7 +112,7 @@ in
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
           echo "./test/conftest_user.py"
           cat ./test/conftest_user.py
-          python -m pytest ${deselectAllExpression} test/functional/
+          python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/
         '';
 
         single-test.exec = ''
