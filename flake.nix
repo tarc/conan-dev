@@ -5,7 +5,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:tarc/devenv-nixpkgs/main";
+    nixpkgs.url = "github:tarc/devenv-nixpkgs/rolling";
     git-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs = {
