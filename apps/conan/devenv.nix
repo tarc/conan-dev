@@ -115,6 +115,20 @@ in
           python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/
         '';
 
+        functional-cmake-toolchain-tests.exec = ''
+          cd "$DEVENV_ROOT/conan"
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          if [[ -f ./test/conftest_user.py ]];
+          then
+            rm -f ./test/conftest_user.py
+          fi
+          cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
+          echo "./test/conftest_user.py"
+          cat ./test/conftest_user.py
+          python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/toolchains/cmake/test_cmake_toolchain.py
+        '';
+
         single-test.exec = ''
           cd "$DEVENV_ROOT/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
