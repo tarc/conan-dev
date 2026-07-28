@@ -193,8 +193,8 @@ pkgs.writeTextFile {
             "exe": "ndk-build",
             "default": "system",
             "system": {
-                "path": {'Darwin': "skip-tests"),
-                         'Linux': "skip-tests"),
+                "path": {'Darwin': "skip-tests",
+                         'Linux': "skip-tests",
                          'Windows': "skip-tests"}
             }
         },
