@@ -145,8 +145,8 @@ in
       };
 
       android = {
-        enable = true;
-        ndk.enable = true;
+        enable = false;
+        ndk.enable = false;
       };
     };
   }; # profiles

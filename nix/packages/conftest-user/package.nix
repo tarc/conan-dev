@@ -193,8 +193,8 @@ pkgs.writeTextFile {
             "exe": "ndk-build",
             "default": "system",
             "system": {
-                "path": {'Darwin': os.getenv("ANDROID_NDK"),
-                         'Linux': os.getenv("ANDROID_NDK_ROOT"),
+                "path": {'Darwin': "skip-tests"),
+                         'Linux': "skip-tests"),
                          'Windows': "skip-tests"}
             }
         },

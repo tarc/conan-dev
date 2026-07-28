@@ -30,4 +30,4 @@ steps:
     environment:
       CACHIX_AUTH_TOKEN:
         from_secret: cachix_auth_token
-    depends_on: [functional-cmake-toolchain-tests ]
+    depends_on: [functional-cmake-toolchain-tests]
