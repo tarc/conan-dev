@@ -214,8 +214,8 @@ in
     then
       git submodule update --init --remote
     fi
-    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements.txt
-    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_server.txt
-    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r conan/conans/requirements_dev.txt
+    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r "$DEVENV_ROOT/conan/conans/requirements.txt"
+    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r "$DEVENV_ROOT/conan/conans/requirements_server.txt"
+    ${python.uv.package}/bin/uv pip install --python "$VENV_PATH/bin/python" -r "$DEVENV_ROOT/conan/conans/requirements_dev.txt"
   '';
 }
