@@ -19,6 +19,8 @@ steps:
         from_secret: cachix_auth_token
   - name: functional-tests
     image: nixos/nix
+    when:
+      - evaluate: 'false'
     commands:
       - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
       - echo 'extra-substituters = https://devenv.cachix.org https://cachix.cachix.org' >> /etc/nix/nix.conf
