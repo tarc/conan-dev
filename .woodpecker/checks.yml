@@ -14,7 +14,6 @@ steps:
     environment:
       CACHIX_AUTH_TOKEN:
         from_secret: cachix_auth_token
-
   - name: functional-cmake-toolchain-tests
     image: nixos/nix
     commands:
@@ -29,7 +28,6 @@ steps:
     environment:
       CACHIX_AUTH_TOKEN:
         from_secret: cachix_auth_token
-
   - name: functional-tests
     image: nixos/nix
     when:

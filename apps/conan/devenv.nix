@@ -143,11 +143,6 @@ in
           python -m pytest ${deselectAllExpression} "$@"
         '';
       };
-
-      android = {
-        enable = false;
-        ndk.enable = false;
-      };
     };
   }; # profiles
 
