@@ -111,6 +111,7 @@ let
   embedmd = pkgs.callPackage ./packages/embedmd/package.nix { };
   mdsh_0_9_2 = pkgs.callPackage ./packages/mdsh-0.9.2/package.nix { };
   mdsh_0_9_3 = pkgs.callPackage ./packages/mdsh-0.9.3/package.nix { mdsh = mdsh_0_9_2; };
+  devenv = pkgs.callPackage ./packages/devenv/package.nix { };
 
   # Configuration
   cfg = config.intelOpenapiToolkit;
@@ -179,6 +180,7 @@ in
         embedmd
         mdsh_0_9_2
         mdsh_0_9_3
+        devenv
 
         conftestUser
         ;
@@ -195,6 +197,7 @@ in
           cmake_3_15_7
           cmake_3_27_9
           cmake_4_1_2
+          devenv
           embedmd
           git-wrapped
           intel-oneapi-toolkit_2026_0_0_198

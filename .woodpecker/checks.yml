@@ -4,7 +4,7 @@ when:
     path:
       exclude: ["README.md", ".gitignore"]
 steps:
-  - name: Setup and install devenv
+  - name: setup
     image: nixos/nix
     commands:
       - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
@@ -25,6 +25,7 @@ steps:
       - nix profile add github:tarc/devenv/ci/profile-add --accept-flake-config
       - cd apps/conan
       - devenv shell -- functional-cmake-toolchain-tests
+    depends_on: [setup]
     environment:
       CACHIX_AUTH_TOKEN:
         from_secret: cachix_auth_token
@@ -41,6 +42,7 @@ steps:
       - nix profile add github:tarc/devenv/ci/profile-add --accept-flake-config
       - cd apps/conan
       - devenv shell -- functional-tests
+    depends_on: [setup]
     environment:
       CACHIX_AUTH_TOKEN:
         from_secret: cachix_auth_token
