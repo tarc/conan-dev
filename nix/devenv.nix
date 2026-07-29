@@ -85,7 +85,7 @@ let
   # Tools:
   conan_2_28_1 = pkgs.callPackage ./packages/conan-2.28.1/package.nix { };
   conan_2_30_0 = pkgs.callPackage ./packages/conan-2.30.0/package.nix { };
-  conan_2_31_0 = pkgs.callPackage ./packages/conan-develop2/package.nix { };
+  conan = pkgs.callPackage ./packages/conan-develop2/package.nix { };
   git-wrapped = pkgs.writeShellApplication {
     name = "git";
     runtimeInputs = [
@@ -175,7 +175,7 @@ in
 
         conan_2_28_1
         conan_2_30_0
-        conan_2_31_0
+        conan
         git-wrapped
         embedmd
         mdsh_0_9_2

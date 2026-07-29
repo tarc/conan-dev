@@ -145,7 +145,7 @@ in
     };
     conan = {
       enable = true;
-      package = cfg.packages.conan_2_31_0;
+      package = cfg.packages.conan;
       config = {
         profiles = {
           settings = {

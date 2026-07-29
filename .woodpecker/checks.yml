@@ -16,6 +16,8 @@ steps:
         from_secret: cachix_auth_token
   - name: functional-cmake-toolchain-tests
     image: nixos/nix
+    when:
+      - evaluate: "false"
     commands:
       - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
       - echo 'extra-substituters = https://conan-dev.cachix.org https://devenv.cachix.org https://cachix.cachix.org' >> /etc/nix/nix.conf
@@ -28,10 +30,26 @@ steps:
     environment:
       CACHIX_AUTH_TOKEN:
         from_secret: cachix_auth_token
-  - name: functional-tests
+  - name: functional-toolchains-tests
     image: nixos/nix
     when:
       - evaluate: "true"
+    commands:
+      - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
+      - echo 'extra-substituters = https://conan-dev.cachix.org https://devenv.cachix.org https://cachix.cachix.org' >> /etc/nix/nix.conf
+      - echo 'extra-trusted-public-keys = conan-dev.cachix.org-1:8mhLcsmkRNm2O5ot0A2G8+Cjzz0RHqLAgYV3R6Fkgfw= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM=' >> /etc/nix/nix.conf
+      - cat apps/conan/devenv.local.nix
+      - nix profile add github:tarc/devenv/ci/profile-add --accept-flake-config
+      - cd apps/conan
+      - devenv shell -- functional-toolchains-tests
+    depends_on: [setup]
+    environment:
+      CACHIX_AUTH_TOKEN:
+        from_secret: cachix_auth_token
+  - name: functional-tests
+    image: nixos/nix
+    when:
+      - evaluate: "false"
     commands:
       - echo 'experimental-features = flakes nix-command' >> /etc/nix/nix.conf
       - echo 'extra-substituters = https://conan-dev.cachix.org https://devenv.cachix.org https://cachix.cachix.org' >> /etc/nix/nix.conf
