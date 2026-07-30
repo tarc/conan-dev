@@ -36,7 +36,7 @@ in
 
       scripts = {
         all-tests.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -50,7 +50,7 @@ in
         '';
 
         single-test.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -88,7 +88,7 @@ in
 
       scripts = {
         all-tests.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -102,7 +102,7 @@ in
         '';
 
         functional-tests.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -116,7 +116,7 @@ in
         '';
 
         functional-toolchains-tests.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -137,7 +137,7 @@ in
         '';
 
         functional-cmake-toolchain-tests.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -151,7 +151,7 @@ in
         '';
 
         single-test.exec = ''
-          cd "$DEVENV_ROOT/conan"
+          cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
           echo "PYTHONPATH: ''${PYTHONPATH@Q}"
           if [[ -f ./test/conftest_user.py ]];
@@ -186,7 +186,7 @@ in
       set -euo pipefail
       set -x
       git submodule update --init --remote
-      cd "$DEVENV_ROOT/conan"
+      cd "${config.git.root}/apps/conan/conan"
       git checkout nix-tests
       git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
     '';
@@ -194,7 +194,7 @@ in
     get-conan-submodule.exec = ''
       set -euo pipefail
       set -x
-      cd "$DEVENV_ROOT"
+      cd "${config.git.root}/apps/conan"
       path=$(git config --file ../../.gitmodules --get submodule.conan.path)
       url=$(git config --file ../../.gitmodules --get submodule.conan.url)
       branch=$(git config --file ../../.gitmodules --get submodule.conan.branch)
@@ -206,7 +206,7 @@ in
     update-conan-submodule.exec = ''
       set -euo pipefail
       set -x
-      cd "$DEVENV_ROOT/conan"
+      cd "${config.git.root}/apps/conan/conan"
       git checkout nix-tests
       git fetch upstream
       git rebase upstream/develop2
@@ -214,7 +214,7 @@ in
 
     change-conan-submodule.exec = ''
       set -euo pipefail
-      cd "$DEVENV_ROOT"
+      cd "${config.git.root}/apps/conan"
       path=$(git config --file ../../.gitmodules --get submodule.conan.path)
       url=$(git config --file ../../.gitmodules --get submodule.conan.url)
       if [ -z "''${1:-}" ]; then

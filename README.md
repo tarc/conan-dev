@@ -21,8 +21,21 @@ To get started, clone this repository and allow `devenv` to set up the environme
 
 ```sh
 git clone ssh://git@codeberg.org/tarcisio/conan-dev.git
-cd conan-dev/apps/conan
-devenv allow
+cd conan-dev
+devenv --from path:apps/conan allow
+```
+
+In the `apps/conan/devenv.yaml` file, the default profile is set as:
+
+[embedmd]:# (./apps/conan/devenv.yaml yaml /profile:.*/)
+```yaml
+profile: testAll
+```
+
+It's also possible to specify the profile directly:
+
+```sh
+devenv --from path:apps/conan --profile testIntelCc allow
 ```
 
 After the above commands finish executing, run the following:
@@ -49,171 +62,12 @@ init-conan-submodule.exec = ''
   set -euo pipefail
   set -x
   git submodule update --init --remote
-  cd "$DEVENV_ROOT/conan"
+  cd "${config.git.root}/apps/conan/conan"
   git checkout nix-tests
   git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
 '';
 ```
 
-## Profile activation
-
-Two profiles are available:
-
-[embedmd]:# (./apps/conan/devenv.nix nix /.*profiles = {/ /}; # profiles/ dedent)
-```nix
-profiles = {
-  testIntelCc.module = {
-    inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
-
-    packages = with cfg.packages; [
-      cmake_3_15_7
-    ];
-
-    scripts = {
-      all-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectExpression} .
-      '';
-
-      single-test.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectExpression} "$@"
-      '';
-    };
-  };
-
-  testAll.module = {
-    stdenv = cfg.packages.multiStdenv;
-
-    packages = with cfg.packages; [
-      python_3_11_6
-      python_3_12_3
-      clang_20
-      cmake_3_15_7
-      # cmake_3_27_9
-      # cmake_4_1_2 # Breaks `TestIntelCC::test_intel_oneapi_and_icpx`
-      git-wrapped
-      autoconf
-      automake
-      libtool_2
-      ninja_1_10_2
-      meson
-      scons
-      emscripten
-      node
-    ];
-
-    scripts = {
-      all-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectAllExpression} .
-      '';
-
-      functional-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/
-      '';
-
-      functional-toolchains-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} \
-          test/functional/revisions_test.py \
-          test/functional/subsystems_build_test.py \
-          test/functional/test_local_recipes_index.py \
-          test/functional/test_profile_detect_api.py \
-          test/functional/test_third_party_patch_flow.py \
-          test/functional/tools_versions_test.py \
-          test/functional/toolchains/
-      '';
-
-      functional-cmake-toolchain-tests.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/toolchains/cmake/test_cmake_toolchain.py
-      '';
-
-      single-test.exec = ''
-        cd "$DEVENV_ROOT/conan"
-        export PYTHONPATH=$PYTHONPATH:$(pwd)
-        echo "PYTHONPATH: ''${PYTHONPATH@Q}"
-        if [[ -f ./test/conftest_user.py ]];
-        then
-          rm -f ./test/conftest_user.py
-        fi
-        cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-        echo "./test/conftest_user.py"
-        cat ./test/conftest_user.py
-        python -m pytest ${deselectAllExpression} "$@"
-      '';
-    };
-  };
-}; # profiles
-```
-
-### Profile: `testIntelCc`
-
-```sh
-single-test test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC -s
-```
-
-### Profile: `testAll`
-
-```sh
-all-tests
-```
 
 ## References
 
