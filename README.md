@@ -69,6 +69,62 @@ init-conan-submodule.exec = ''
 ```
 
 
+## Usage
+
+### Update Conan submodule
+
+```sh > text $
+update-conan-submodule
+```
+
+<!-- BEGIN mdsh -->
+```text
+Your branch is up to date with 'origin/nix-tests'.
+Current branch nix-tests is up to date.
+```
+<!-- END mdsh -->
+
+### Testing
+
+```sh > text $
+functional-cmake-toolchain-tests
+```
+
+<!-- BEGIN mdsh -->
+```text
+============================= test session starts ==============================
+platform linux -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/tarci/projects/conan-dev/apps/conan/conan
+configfile: pytest.ini
+plugins: cov-7.1.0, xdist-3.8.0
+collected 38 items
+
+test/functional/toolchains/cmake/test_cmake_toolchain.py sss...s.....sss [ 39%]
+sss...........sssss.s..                                                  [100%]
+
+======================= 22 passed, 16 skipped in 26.50s ========================
+```
+<!-- END mdsh -->
+
+```sh > text $
+single-test test/functional/test_profile_detect_api.py -s
+```
+
+<!-- BEGIN mdsh -->
+```text
+============================= test session starts ==============================
+platform linux -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/tarci/projects/conan-dev/apps/conan/conan
+configfile: pytest.ini
+plugins: cov-7.1.0, xdist-3.8.0
+collected 9 items
+
+test/functional/test_profile_detect_api.py s.s......
+
+========================= 7 passed, 2 skipped in 0.20s =========================
+```
+<!-- END mdsh -->
+
 ## References
 
 ### Docs

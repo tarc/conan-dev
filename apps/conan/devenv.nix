@@ -38,28 +38,28 @@ in
         all-tests.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectExpression} .
         '';
 
         single-test.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectExpression} "$@"
         '';
       };
@@ -90,42 +90,42 @@ in
         all-tests.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectAllExpression} .
         '';
 
         functional-tests.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/
         '';
 
         functional-toolchains-tests.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} \
             test/functional/revisions_test.py \
             test/functional/subsystems_build_test.py \
@@ -139,28 +139,28 @@ in
         functional-cmake-toolchain-tests.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectTestOverwriteReadOnlyFileExpression} test/functional/toolchains/cmake/test_cmake_toolchain.py
         '';
 
         single-test.exec = ''
           cd "${config.git.root}/apps/conan/conan"
           export PYTHONPATH=$PYTHONPATH:$(pwd)
-          echo "PYTHONPATH: ''${PYTHONPATH@Q}"
+          echo "PYTHONPATH: ''${PYTHONPATH@Q}" >&2
           if [[ -f ./test/conftest_user.py ]];
           then
             rm -f ./test/conftest_user.py
           fi
           cp ${cfg.packages.conftestUser}/conf/conftest_user.py ./test/conftest_user.py
-          echo "./test/conftest_user.py"
-          cat ./test/conftest_user.py
+          echo "./test/conftest_user.py" >&2
+          cat ./test/conftest_user.py >&2
           python -m pytest ${deselectAllExpression} "$@"
         '';
       };
