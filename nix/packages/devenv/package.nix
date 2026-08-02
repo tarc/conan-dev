@@ -48,7 +48,6 @@ rustPlatform.buildRustPackage {
     owner = "cachix";
     repo = "devenv";
     tag = "v2.2.1";
-    # rev = "8f297eae651cb47fb1e8f7c19b942462aa879636";
     hash = "sha256-S4baMekJYJGWDCo1yOYxZkmgBlAruQ5MLi+h3Zo8als=";
   };
 
