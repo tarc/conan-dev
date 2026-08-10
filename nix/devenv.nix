@@ -124,7 +124,7 @@ in
   options = {
     conanDev.packages = pkgs.lib.mkOption {
       type = config.lib.types.outputOf (lib.types.lazyAttrsOf (lib.types.raw or lib.types.unspecified));
-      description = "The package set used in play-python projects";
+      description = "The package set used in the conan-dev projects";
       defaultText = lib.literalMD "The set of packages that are known to work with Conan tests";
     };
     intelOpenapiToolkit = {
