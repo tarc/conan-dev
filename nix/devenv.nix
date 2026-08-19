@@ -14,10 +14,10 @@ let
     targetPlatform.linker = "lld";
   }) pkgs.llvmPackages.clangUseLLVM;
   intel-oneapi-toolkit_2026_0_0_198 =
-    pkgs.callPackage ./packages/intel-oneapi-toolkit-2026.0.0.198/package.nix
+    pkgs.callPackage ./packages/intel-oneapi-toolkit/package-2026.0.0.198.nix
       { };
   intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM =
-    pkgs.callPackage ./packages/intel-oneapi-toolkit-2026.0.0.198/package.nix
+    pkgs.callPackage ./packages/intel-oneapi-toolkit/package-2026.0.0.198.nix
       { stdenv = libcxxStdenv_useLLVM; };
 
   kit = intel-oneapi-toolkit_2026_0_0_198;
