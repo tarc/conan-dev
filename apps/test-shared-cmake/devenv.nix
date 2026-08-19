@@ -136,7 +136,7 @@ in
     bootstrap-intelapp
   '';
 
-  inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
+  inherit (cfg.packages.intel-oneapi-toolkit_2026_0_1_27) stdenv;
 
   languages.cplusplus = {
     enable = true;

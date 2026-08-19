@@ -9,14 +9,14 @@
   cmake_3_27_9,
   cmake_4_1_2,
   git-wrapped,
-  intel-oneapi-toolkit_2026_0_0_198,
+  intel-oneapi-toolkit_2026_0_1_27,
   libc_bin,
   ninja_1_10_2,
   pkg-config_0_28,
   pkg-config_0_29_2,
   premake5,
   qbs_2_6_0,
-  intelOpenapiToolkit ? intel-oneapi-toolkit_2026_0_0_198,
+  intelOpenapiToolkit ? intel-oneapi-toolkit_2026_0_1_27,
 }:
 let
   oneapiPath =

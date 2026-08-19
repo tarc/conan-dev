@@ -13,6 +13,9 @@ let
     targetPlatform.useLLVM = true;
     targetPlatform.linker = "lld";
   }) pkgs.llvmPackages.clangUseLLVM;
+  intel-oneapi-toolkit_2026_0_1_27 =
+    pkgs.callPackage ./packages/intel-oneapi-toolkit/package-2026.0.1.27.nix
+      { };
   intel-oneapi-toolkit_2026_0_0_198 =
     pkgs.callPackage ./packages/intel-oneapi-toolkit/package-2026.0.0.198.nix
       { };
@@ -20,7 +23,7 @@ let
     pkgs.callPackage ./packages/intel-oneapi-toolkit/package-2026.0.0.198.nix
       { stdenv = libcxxStdenv_useLLVM; };
 
-  kit = intel-oneapi-toolkit_2026_0_0_198;
+  kit = intel-oneapi-toolkit_2026_0_1_27;
   oneapiCCUnwrapped = kit.stdenv.cc.cc.overrideAttrs (old: {
     passthru = (old.passthru or { }) // {
       langCC = true;
@@ -131,8 +134,8 @@ in
       enable = lib.mkEnableOption "Enable Intel oneAPI Toolkit testing";
       package = lib.mkOption {
         type = lib.types.package;
-        default = pkgs.intel-oneapi-toolkit_2026_0_0_198;
-        defaultText = lib.literalExpression "pkgs.intel-oneapi-toolkit_2026_0_0_198";
+        default = pkgs.intel-oneapi-toolkit_2026_0_1_27;
+        defaultText = lib.literalExpression "pkgs.intel-oneapi-toolkit_2026_0_1_27";
         description = "The Intel oneAPI Toolkit package to use.";
       };
     };
@@ -146,6 +149,7 @@ in
         libcxxStdenv_useLLVM
         intel-oneapi-toolkit_2026_0_0_198
         intel-oneapi-toolkit_2026_0_0_198_libcxxStdenv_useLLVM
+        intel-oneapi-toolkit_2026_0_1_27
         oneapiStdenv
 
         #
@@ -189,6 +193,7 @@ in
     packages = [
       pkgs.embedmd
       pkgs.mdsh
+      pkgs.intel-oneapi-toolkit_2026_0_1_27
     ];
 
     overlays = [
@@ -200,6 +205,7 @@ in
           devenv
           embedmd
           git-wrapped
+          intel-oneapi-toolkit_2026_0_1_27
           intel-oneapi-toolkit_2026_0_0_198
           libc_bin
           ninja_1_10_2

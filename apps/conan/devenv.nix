@@ -28,7 +28,7 @@ in
 {
   profiles = {
     testIntelCc.module = {
-      inherit (cfg.packages.intel-oneapi-toolkit_2026_0_0_198) stdenv;
+      inherit (cfg.packages.intel-oneapi-toolkit_2026_0_1_27) stdenv;
 
       packages = with cfg.packages; [
         cmake_3_15_7
