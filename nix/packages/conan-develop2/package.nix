@@ -89,7 +89,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
     "test_conan_new_compiles"
     # 'clang' tool chains
     "test_detect_clang_gcc_toolchain"
-    #
+    # Parallel upload test fails sometimes
     "test_upload_parallel_success"
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
