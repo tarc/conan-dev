@@ -218,7 +218,8 @@ in
         5. Update the version in @nix/packages/conan-develop2/package.nix to the latest released version from step 2, if necessary. It's the `version` attribute in the `python3Packages.buildPythonApplication` call
         6. If step 4 found the commit changed, update the commit hash in @nix/packages/conan-develop2/package.nix (it's in the let binding, the `revision` variable) to the latest commit from step 3
         7. If step 4 found the commit changed, run `nix store prefetch-file --unpack --hash-type sha256 --json "https://github.com/tarc/conan/archive/<commit>.tar.gz" | jq -r .hash`, substituting the commit placeholder with the value from step 3, then update the `hash` attribute in the `src = fetchFromGitHub` call in @nix/packages/conan-develop2/package.nix to the result. `--unpack` is required: `fetchFromGitHub` hashes the *unpacked* source tree (recursive/NAR mode), not the raw tarball bytes, so hashing the compressed file directly (e.g. with `nix hash file`) would produce a value that never matches what `nix build` computes
-        8. Commit the changes if the version or the commit hash (and therefore the NAR hash) were updated
+        8. If step 4 found the commit changed, run `devenv build conanDev.packages.conan` to verify the updated package actually builds (this also runs its test suite via `pytestCheckHook`). If it fails with a "Missing required secrets: CACHIX_AUTH_TOKEN" error, retry as `CACHIX_AUTH_TOKEN=dummy devenv build conanDev.packages.conan` — that secret is only needed to push to the build cache, not to build. If the build fails for any other reason, stop here, leave the file edits in place, and report the failure instead of committing
+        9. Commit the changes if the version or the commit hash (and therefore the NAR hash) were updated, and step 8 either succeeded or was skipped because nothing changed
       '';
     };
 
@@ -243,6 +244,8 @@ in
             "git:*"
             "jq:*"
             "nix store prefetch-file:*"
+            "devenv build:*"
+            "CACHIX_AUTH_TOKEN=dummy devenv build:*"
           ];
         };
       };
