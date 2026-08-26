@@ -1,4 +1,4 @@
-# Devenv
+# devenv
 .devenv*
 devenv.local.nix
 devenv.local.yaml
@@ -9,5 +9,14 @@ devenv.local.yaml
 # pre-commit
 .pre-commit-config.yaml
 
-# devenv
-devenv.lock
+# claude
+**/.claude/settings.local.json
+.claude/settings.json
+.claude/agents
+.claude/commands
+.mcp.json
+.devcontainer.json
+
+# opencode
+opencode.jsonc
+.opencode/commands

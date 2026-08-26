@@ -58,13 +58,14 @@ and checkout a specific branch with minor changes on the test suite:
 
 [embedmd]:# (./apps/conan/devenv.nix nix /.*init-conan-submodule/ /'';/ dedent)
 ```nix
-init-conan-submodule.exec = ''
-  set -euo pipefail
-  set -x
-  git submodule update --init --remote
-  cd "${config.git.root}/apps/conan/conan"
-  git checkout nix-tests
-  git remote add upstream git@github.com:conan-io/conan.git 2>/dev/null
+  1. Make sure that the git submodule at `apps/conan/conan` has been initialized (otherwize you can initialize it with `init-conan-submodule`)
+  2. Enter in the `apps/conan/conan` directory from the root of this repository and run `git describe --tags --abbrev=0` to get the latest released version, used only as a human-readable version label
+  3. Run `git rev-parse HEAD` to get the current hash commit of the conan submodule. If this commit is local only, fail informing this fact. For this step to pass, the commit should be also on the origin remote (`git branch -r --contains HEAD` contains `origin/nix-tests`)
+  4. Before editing anything, compare the commit from step 3 against the current `revision` value already in @nix/packages/conan-develop2/package.nix (the let binding), and remember whether they differ — this drives steps 6 and 7 below, so decide it now, before the file is touched
+  5. Update the version in @nix/packages/conan-develop2/package.nix to the latest released version from step 2, if necessary. It's the `version` attribute in the `python3Packages.buildPythonApplication` call
+  6. If step 4 found the commit changed, update the commit hash in @nix/packages/conan-develop2/package.nix (it's in the let binding, the `revision` variable) to the latest commit from step 3
+  7. If step 4 found the commit changed, run `nix store prefetch-file --unpack --hash-type sha256 --json "https://github.com/tarc/conan/archive/<commit>.tar.gz" | jq -r .hash`, substituting the commit placeholder with the value from step 3, then update the `hash` attribute in the `src = fetchFromGitHub` call in @nix/packages/conan-develop2/package.nix to the result. `--unpack` is required: `fetchFromGitHub` hashes the *unpacked* source tree (recursive/NAR mode), not the raw tarball bytes, so hashing the compressed file directly (e.g. with `nix hash file`) would produce a value that never matches what `nix build` computes
+  8. Commit the changes if the version or the commit hash (and therefore the NAR hash) were updated
 '';
 ```
 
@@ -102,7 +103,7 @@ collected 38 items
 test/functional/toolchains/cmake/test_cmake_toolchain.py sss...s.....sss [ 39%]
 sss...........sssss.s..                                                  [100%]
 
-======================= 22 passed, 16 skipped in 21.53s ========================
+======================= 22 passed, 16 skipped in 15.63s ========================
 ```
 <!-- END mdsh -->
 
@@ -121,7 +122,7 @@ collected 9 items
 
 test/functional/test_profile_detect_api.py s.s......
 
-========================= 7 passed, 2 skipped in 0.17s =========================
+========================= 7 passed, 2 skipped in 0.16s =========================
 ```
 <!-- END mdsh -->
 

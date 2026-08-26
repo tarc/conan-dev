@@ -4,6 +4,7 @@
 }:
 let
   python = config.languages.python;
+
   cfg = config.conanDev;
 
   # Settings:
@@ -18,9 +19,11 @@ let
     --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_sycl_meson" \
     --deselect="test/unittests/tools/env/test_env_files.py::test_env_files_sh[None]" \
   '';
+
   deselectAllExpression = deselectExpression + ''
     --deselect="test/functional/toolchains/intel/test_intel_cc.py::TestIntelCC::test_intel_oneapi_and_icpx" \
   '';
+
   deselectTestOverwriteReadOnlyFileExpression = deselectAllExpression + ''
     --deselect="test/functional/command/test_config_install.py::TestConfigInstall::test_overwrite_read_only_file" \
   '';
@@ -177,6 +180,71 @@ in
       };
       venv = {
         enable = true;
+      };
+    };
+  };
+
+  opencode = {
+    enable = true;
+    commands = {
+      inherit (config.claude.code.commands)
+        update-conan
+        ;
+    };
+  };
+
+  claude.code = {
+    enable = true;
+    mcpServers = {
+      # Local devenv MCP server
+      devenv = {
+        type = "stdio";
+        command = "devenv";
+        args = [ "mcp" ];
+        env = {
+          DEVENV_ROOT = config.devenv.root;
+        };
+      };
+    };
+
+    commands = {
+      update-conan = ''
+        In @nix/packages/conan-develop2/package.nix bump the version, and update the hash in the `src = fetchFromGitHub` call if necessary.
+
+        1. Make sure that the git submodule at `apps/conan/conan` has been initialized (otherwize you can initialize it with `init-conan-submodule`)
+        2. Enter in the `apps/conan/conan` directory from the root of this repository and run `git describe --tags --abbrev=0` to get the latest released version, used only as a human-readable version label
+        3. Run `git rev-parse HEAD` to get the current hash commit of the conan submodule. If this commit is local only, fail informing this fact. For this step to pass, the commit should be also on the origin remote (`git branch -r --contains HEAD` contains `origin/nix-tests`)
+        4. Before editing anything, compare the commit from step 3 against the current `revision` value already in @nix/packages/conan-develop2/package.nix (the let binding), and remember whether they differ — this drives steps 6 and 7 below, so decide it now, before the file is touched
+        5. Update the version in @nix/packages/conan-develop2/package.nix to the latest released version from step 2, if necessary. It's the `version` attribute in the `python3Packages.buildPythonApplication` call
+        6. If step 4 found the commit changed, update the commit hash in @nix/packages/conan-develop2/package.nix (it's in the let binding, the `revision` variable) to the latest commit from step 3
+        7. If step 4 found the commit changed, run `nix store prefetch-file --unpack --hash-type sha256 --json "https://github.com/tarc/conan/archive/<commit>.tar.gz" | jq -r .hash`, substituting the commit placeholder with the value from step 3, then update the `hash` attribute in the `src = fetchFromGitHub` call in @nix/packages/conan-develop2/package.nix to the result. `--unpack` is required: `fetchFromGitHub` hashes the *unpacked* source tree (recursive/NAR mode), not the raw tarball bytes, so hashing the compressed file directly (e.g. with `nix hash file`) would produce a value that never matches what `nix build` computes
+        8. Commit the changes if the version or the commit hash (and therefore the NAR hash) were updated
+      '';
+    };
+
+    permissions = {
+      rules = {
+        WebFetch = {
+          allow = [
+            "domain:github.com"
+            "domain:docs.anthropic.com"
+          ];
+        };
+        Edit = {
+          allow = [
+            "nix/packages/devenv/package.nix"
+            "nix/packages/conan-develop2/package.nix"
+          ];
+        };
+        Bash = {
+          allow = [
+            "nix search:*"
+            "nix-instantiate:*"
+            "git:*"
+            "jq:*"
+            "nix store prefetch-file:*"
+          ];
+        };
       };
     };
   };
