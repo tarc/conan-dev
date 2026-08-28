@@ -193,7 +193,6 @@ in
     packages = [
       pkgs.embedmd
       pkgs.mdsh
-      pkgs.intel-oneapi-toolkit_2026_0_1_27
     ];
 
     overlays = [
