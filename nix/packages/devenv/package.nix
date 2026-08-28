@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   fetchFromGitHub,
   gitMinimal,
   makeBinaryWrapper,
@@ -14,6 +15,7 @@
   sqlite,
   pkg-config,
   glibcLocalesUtf8,
+  boehmgc,
   libghostty-vt,
   llvmPackages,
   nixd,
@@ -24,18 +26,18 @@
 let
   version = "2.2.2";
   devenvNixVersion = "2.35";
-  devenvNixRev = "f521bcc0b07d80921104a973996823392d247f7a";
+  devenvNixRev = "159d0598c76f4807897db3a285a36f0ad2171cf8";
 
   devenvNixSrc = fetchFromGitHub {
     name = "devenv-nix-${devenvNixVersion}-source";
     owner = "cachix";
     repo = "nix";
     rev = devenvNixRev;
-    hash = "sha256-Mdi8Ge6bMMLO901i2WCMOkiwNTYiKJivKN2kRfGxvXo=";
+    hash = "sha256-798cs7JX8UExiwXFoeuXYhJmJEsV0I5SHCwijLNg0Vw=";
   };
 
   nix_components = (nixVersions.nixComponents_git.overrideSource devenvNixSrc).overrideScope (
-    _finalScope: _prevScope: {
+    finalScope: prevScope: {
       version = devenvNixVersion;
     }
   );
@@ -48,11 +50,11 @@ rustPlatform.buildRustPackage {
     owner = "cachix";
     repo = "devenv";
     # tag = "v" + version;
-    rev = "4b10b32036245a13efdb0d77d69d6990d1c8a3f5";
-    hash = "sha256-yRtH4Vs49zZE+u3CR1iBs6jTUp1o/4SdCyshZ5+ojbw=";
+    rev = "3d2c030b7ba3da63bd68619c510aedd68cde11c9";
+    hash = "sha256-RcTIzJeO86DUS48m2IXQznconZJ5MmL1H9gMegFZ04c=";
   };
 
-  cargoHash = "sha256-h3LD/jV/lXbFCTbaEimGmiWJ5/QqjeMpJUb3lTupYjg=";
+  cargoHash = "sha256-8BVWpGZ+36BnMaHVEdZOYuNg1v5JxKn/AMo3gYX4jFo=";
 
   env = {
     RUSTFLAGS = "--cfg tracing_unstable";
