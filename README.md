@@ -102,7 +102,7 @@ collected 38 items
 test/functional/toolchains/cmake/test_cmake_toolchain.py sss...s.....sss [ 39%]
 sss...........sssss.s..                                                  [100%]
 
-======================= 22 passed, 16 skipped in 24.51s ========================
+======================= 22 passed, 16 skipped in 14.40s ========================
 ```
 <!-- END mdsh -->
 

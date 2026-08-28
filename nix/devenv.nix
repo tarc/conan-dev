@@ -191,6 +191,7 @@ in
     };
 
     packages = [
+      pkgs.conan
       pkgs.embedmd
       pkgs.mdsh
     ];
@@ -201,6 +202,7 @@ in
           cmake_3_15_7
           cmake_3_27_9
           cmake_4_1_2
+          conan
           devenv
           embedmd
           git-wrapped

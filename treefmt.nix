@@ -4,9 +4,7 @@
     excludes = [
       "*.toml"
       "nix/packages/*"
-      "nix/build-support/*/*.sh"
-      "nix/build-support/*/*.nix"
-      "nix/build-support/*/*.bash"
+      "nix/build-support/*"
     ];
   };
 
