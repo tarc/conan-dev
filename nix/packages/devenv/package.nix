@@ -14,6 +14,7 @@
   protobuf,
   sqlite,
   pkg-config,
+  cmake,
   glibcLocalesUtf8,
   boehmgc,
   libghostty-vt,
@@ -24,16 +25,16 @@
 }:
 
 let
-  version = "2.2.2";
+  version = "2.3";
   devenvNixVersion = "2.35";
-  devenvNixRev = "159d0598c76f4807897db3a285a36f0ad2171cf8";
+  devenvNixRev = "b9b81726b38469c55b9706d80d37d6c73cc7f76c";
 
   devenvNixSrc = fetchFromGitHub {
     name = "devenv-nix-${devenvNixVersion}-source";
     owner = "cachix";
     repo = "nix";
     rev = devenvNixRev;
-    hash = "sha256-798cs7JX8UExiwXFoeuXYhJmJEsV0I5SHCwijLNg0Vw=";
+    hash = "sha256-3NT3yTvoRT7+rxLDNovpyeTDIJkZlBoO72rcu2x9Y9o=";
   };
 
   nix_components = (nixVersions.nixComponents_git.overrideSource devenvNixSrc).overrideScope (
@@ -49,12 +50,11 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "cachix";
     repo = "devenv";
-    # tag = "v" + version;
-    rev = "3d2c030b7ba3da63bd68619c510aedd68cde11c9";
-    hash = "sha256-RcTIzJeO86DUS48m2IXQznconZJ5MmL1H9gMegFZ04c=";
+    rev = "37ecc72f1167655457851514507281310b3b1c3a";
+    hash = "sha256-oC3BeM/aDJEMbBY5Ia1SrkAEp+ZxyGtSTAa5RiX346U=";
   };
 
-  cargoHash = "sha256-8BVWpGZ+36BnMaHVEdZOYuNg1v5JxKn/AMo3gYX4jFo=";
+  cargoHash = "sha256-ZxKZQzaNl+H3RwMRFedvE+I1lzylB/kt6XjxGM+aans=";
 
   env = {
     RUSTFLAGS = "--cfg tracing_unstable";
@@ -74,6 +74,7 @@ rustPlatform.buildRustPackage {
     makeBinaryWrapper
     pkg-config
     protobuf
+    cmake
     rustPlatform.bindgenHook
   ];
 
