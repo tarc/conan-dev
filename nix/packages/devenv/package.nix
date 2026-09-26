@@ -25,16 +25,16 @@
 }:
 
 let
-  version = "2.3";
+  version = "2.4.0";
   devenvNixVersion = "2.35";
-  devenvNixRev = "b9b81726b38469c55b9706d80d37d6c73cc7f76c";
+  devenvNixRev = "bd10d7f563420c6034b9d1dc75c4168fc01e5afc";
 
   devenvNixSrc = fetchFromGitHub {
     name = "devenv-nix-${devenvNixVersion}-source";
     owner = "cachix";
     repo = "nix";
     rev = devenvNixRev;
-    hash = "sha256-3NT3yTvoRT7+rxLDNovpyeTDIJkZlBoO72rcu2x9Y9o=";
+    hash = "sha256-acP7QvsB+dHghUeL9AwSSZ3qS//skpqjv484aveg1EQ=";
   };
 
   nix_components = (nixVersions.nixComponents_git.overrideSource devenvNixSrc).overrideScope (
@@ -50,11 +50,11 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "cachix";
     repo = "devenv";
-    rev = "37ecc72f1167655457851514507281310b3b1c3a";
-    hash = "sha256-oC3BeM/aDJEMbBY5Ia1SrkAEp+ZxyGtSTAa5RiX346U=";
+    rev = "6d76db3889deba50ba7d906ec710d59fcd86354a";
+    hash = "sha256-nvpxhuC///gvHzRj9/8A+3+2frKEP8kaabBuQDRO4G4=";
   };
 
-  cargoHash = "sha256-ZxKZQzaNl+H3RwMRFedvE+I1lzylB/kt6XjxGM+aans=";
+  cargoHash = "sha256-47SWOQBLEy+MGUrS+l5QSQluxM4skqUUJLAX4MC66ds=";
 
   env = {
     RUSTFLAGS = "--cfg tracing_unstable";
