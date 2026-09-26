@@ -79,9 +79,7 @@ update-conan-submodule
 
 <!-- BEGIN mdsh -->
 ```text
-Your branch and 'origin/nix-tests' have diverged,
-and have 20 and 5 different commits each, respectively.
-  (use "git pull" if you want to integrate the remote branch with yours)
+Your branch is up to date with 'origin/nix-tests'.
 Current branch nix-tests is up to date.
 ```
 <!-- END mdsh -->
@@ -104,7 +102,7 @@ collected 38 items
 test/functional/toolchains/cmake/test_cmake_toolchain.py sss...s.....sss [ 39%]
 sss...........sssss.s..                                                  [100%]
 
-======================= 22 passed, 16 skipped in 17.91s ========================
+======================= 22 passed, 16 skipped in 17.67s ========================
 ```
 <!-- END mdsh -->
 
@@ -123,7 +121,7 @@ collected 9 items
 
 test/functional/test_profile_detect_api.py s.s......
 
-========================= 7 passed, 2 skipped in 0.18s =========================
+========================= 7 passed, 2 skipped in 0.48s =========================
 ```
 <!-- END mdsh -->
 
