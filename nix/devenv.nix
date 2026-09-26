@@ -193,6 +193,7 @@ in
     packages = [
       pkgs.conan
       pkgs.embedmd
+      pkgs.jq
       pkgs.mdsh
     ];
 
